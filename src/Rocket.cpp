@@ -1,15 +1,20 @@
 #include "Rocket.h"
 
-Rocket::Rocket(Point loc, double dir) :
-	loc{ loc.x, loc.y }, direction{ dir } {}
+#include <iostream>
 
-void Rocket::setDir(double dir) { direction = dir; }
+Rocket::Rocket(Point loc, double dir) :
+	loc{ loc.x, loc.y }, direction{ Vector::getDir(dir).scaleTo(speed) } {}
+
+void Rocket::setDir(double dir) {
+	std::cout << "Turning train to angle " << dir << "\n";
+	direction = Vector::getDir(dir).scaleTo(speed);
+}
 
 void Rocket::step(double seconds) {
-	Vector moveVector = Vector::getDir(direction).scaleTo(speed * seconds);
-	loc = moveBy(loc, moveVector);
+	loc = moveBy(loc, direction);
+	//std::cout << "location: " << loc.x << ", " << loc.y << "\n";
 }
 
 Point Rocket::getLoc() const { return loc; }
 
-double Rocket::getDir() const { return direction; }
+double Rocket::getDir() const { return direction.getAngle(); }

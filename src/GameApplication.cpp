@@ -6,6 +6,8 @@
 
 #define FAIL { success = false; return; }
 
+#define TICK 1000/60
+
 // Color definitions
 #define BLACK 0xff000000
 #define RED 0xff0000ff
@@ -96,16 +98,19 @@ void GameApplication::drawAll() {
 Uint32 tick(Uint32 interval, void* args) {
 	Game* game = (Game*)args;
 
-	//check mouse location
-
 	game->update((double)interval/1000);
 
-	return 0;
+	return interval;
 }
 
 void GameApplication::run() {
 	if (!success)
 		return;
+
+	//start the update timer
+	SDL_AddTimer(TICK, (SDL_TimerCallback)tick, &game);
+
+
 	//render/input loop
 	SDL_Event e;
 	bool quit = false;
@@ -115,6 +120,11 @@ void GameApplication::run() {
 			case SDL_QUIT:
 				quit = true;
 				break;
+			case SDL_MOUSEMOTION: {
+				int mouseX, mouseY; 
+				SDL_GetMouseState(&mouseX, &mouseY);
+				game.turnRocket(Vector(game.getRocket().getLoc(), { mouseX, mouseY }).getAngle());
+			}
 			default:
 				break;
 			}

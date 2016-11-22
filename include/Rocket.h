@@ -5,9 +5,9 @@
 
 class Rocket {
 private:
+	const double speed = 4;	//pixels per millisec
 	Point loc;
-	double direction;
-	int speed;	//pixels per sec
+	Vector direction;
 public:
 	Rocket(Point loc, double direction = 0);
 	void step(double seconds);

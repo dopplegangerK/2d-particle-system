@@ -27,7 +27,6 @@ private:
 
 	//game-related variables
 	Game game;
-	Point mouseLoc = { 0, 0 };
 public:
 	GameApplication();
 	void run();
