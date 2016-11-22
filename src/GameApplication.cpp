@@ -2,13 +2,21 @@
 
 #include <iostream>
 #include <string>
+#include <SDL2_gfxPrimitives.h>
 
 #define FAIL { success = false; return; }
+
+// Color definitions
+#define BLACK 0xff000000
+#define RED 0xff0000ff
 
 void logSDLError(const std::string &msg) {
 	std::cout << msg << " error: " << SDL_GetError() << std::endl;
 }
 
+/******************
+ * Initialization *
+ ******************/
 
 void GameApplication::initSDL() {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -53,6 +61,48 @@ GameApplication::GameApplication() : success{ true }  {
 	createRenderer();
 }
 
+/***************
+* Draw methods *
+****************/
+
+void GameApplication::render() {
+	if (!success)
+		FAIL;
+	SDL_RenderPresent(ren);
+}
+
+void GameApplication::drawBackground() {
+	boxColor(ren, 0, 0, screenWidth, screenHeight, BLACK);
+}
+
+void GameApplication::drawRocket() {
+	Point loc = game.getRocket().getLoc();
+	boxColor(ren, loc.x - 10, loc.y - 10, loc.x + 10, loc.y + 10, RED);
+}
+
+void GameApplication::drawAll() {
+	SDL_RenderClear(ren);
+
+	drawBackground();
+	drawRocket();
+
+	render();
+}
+
+/*****************
+* Update methods *
+******************/
+
+Uint32 tick(Uint32 interval, void* args) {
+	Game* game = (Game*)args;
+
+	//check mouse location
+
+	game->update((double)interval/1000);
+
+	return 0;
+}
+
 void GameApplication::run() {
 	if (!success)
 		return;
@@ -69,6 +119,7 @@ void GameApplication::run() {
 				break;
 			}
 		}
+		drawAll();
 	}
 }
 
