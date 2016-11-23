@@ -1,4 +1,4 @@
-#include Particle.h
+#include "Particle.h"
 
 Particle::Particle(int x, int y, double lifetime):
         x(x), y(y), lifetime(lifetime) { }

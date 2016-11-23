@@ -1,6 +1,8 @@
 #ifndef _PARTICLE_SOURCE_H_
 #define _PARTICLE_SOURCE_H_
 
+#include <vector>
+
 template<class P>
 class ParticleSource {
 protected:
@@ -17,6 +19,6 @@ public:
     virtual ~ParticleSource();
     virtual void step(double seconds);
     virtual void draw_particles();
-}
+};
 
 #endif
