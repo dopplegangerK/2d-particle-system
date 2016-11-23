@@ -57,7 +57,8 @@ void GameApplication::createRenderer() {
 	}
 }
 
-GameApplication::GameApplication() : success{ true }  {
+GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, screenHeight, 100)  {
+	stars.initialize_particles();
 	initSDL();
 	createWindow();
 	createRenderer();
@@ -75,6 +76,7 @@ void GameApplication::render() {
 
 void GameApplication::drawBackground() {
 	boxColor(ren, 0, 0, screenWidth, screenHeight, BLACK);
+	stars.draw_particles(ren);
 }
 
 void GameApplication::drawRocket() {

@@ -3,10 +3,14 @@
 
 #include <SDL.h>
 #include "Game.h"
+#include "Stars.h"
 
 class GameApplication {
 private:
 	bool success;
+	//game-related variables
+	Game game;
+	StarGenerator stars;
 
 	// window stuff
 	const int screenWidth =1024;
@@ -24,9 +28,6 @@ private:
 	void drawBackground();
 	void drawRocket();
 	void drawAll();
-
-	//game-related variables
-	Game game;
 public:
 	GameApplication();
 	void run();

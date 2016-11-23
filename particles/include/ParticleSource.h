@@ -1,24 +1,28 @@
 #ifndef _PARTICLE_SOURCE_H_
 #define _PARTICLE_SOURCE_H_
 
-#include <vector>
+#include <list>
+#include <memory>
+#include <SDL.h>
 
 template<class P>
 class ParticleSource {
 protected:
-    std::vector<P> particles;
+    std::list<std::shared_ptr<P>> particles;
     int density;
-    bool isDynamic;
+    bool dynamic;
+	bool constant;
 
-    //set the position and state of all particles
-    virtual void initialize_particles() = 0;
     //add more particles
-    virtual void generate_particles(int num) = 0;
+    virtual void generate_new_particles(int num) = 0;
 public:
-    ParticleSource(int density, bool isDynamic = true);
-    virtual ~ParticleSource();
+    ParticleSource(int density, bool dynamic = true, bool constant = false);
+	virtual ~ParticleSource() {}
+	// Set the position and state of all particles.
+	// This must be called before using the particle source.
+	virtual void initialize_particles();
     virtual void step(double seconds);
-    virtual void draw_particles();
+    virtual void draw_particles(SDL_Renderer* ren);
 };
 
 #endif
