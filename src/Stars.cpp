@@ -5,6 +5,8 @@
 
 #define SOLID_WHITE 0xffffffff
 #define TRANSPARENT_WHITE 0x64ffffff
+#define LIGHT_WHITE 0x32ffffff
+#define LIGHTER_WHITE 0x16ffffff
 
 Star::Star(int x, int y) : Particle(x, y) {
 	// Generate a random size
@@ -48,6 +50,9 @@ std::shared_ptr<Star> Star::createParticleAt(int x, int y) {
 }
 
 void Star::draw(SDL_Renderer* ren) {
+	//filledCircleColor(ren, x, y, (radius + 1) * 4, LIGHTER_WHITE);
+	//filledCircleColor(ren, x, y, (radius + 1) * 2, LIGHTER_WHITE);
+
 	circleColor(ren, x, y, radius + 1, color);
 	circleColor(ren, x, y, radius, color);
 	//draw center

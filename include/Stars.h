@@ -9,7 +9,7 @@
 
 class Star : public Particle {
 protected:
-	static constexpr int max_radius = 3;
+	static constexpr int max_radius = 4;
 	static constexpr int color_alpha_val = 140;
 	Uint32 color;
 	int radius;

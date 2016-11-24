@@ -8,15 +8,16 @@
 class GameApplication {
 private:
 	bool success;
-	//game-related variables
-	Game game;
-	StarGenerator stars;
 
 	// window stuff
 	const int screenWidth =1024;
 	const int screenHeight = 640;
 	SDL_Window* window = nullptr;
 	SDL_Renderer* ren = nullptr;
+
+	//game-related variables
+	Game game;
+	StarGenerator stars;
 
 	//initialization methods
 	void initSDL();
