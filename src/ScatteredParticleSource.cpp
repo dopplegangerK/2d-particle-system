@@ -1,5 +1,5 @@
 #include "ScatteredParticleSource.h"
-
+/*
 template <class P>
 ScatteredParticleSource<P>::ScatteredParticleSource(int x, int y, unsigned int w, unsigned int h, int density, bool dynamic, bool constant) :
 		ParticleSource(density, dynamic, constant), x{ x }, y{ x }, width{ w }, height{ h }, xDist(x, x + w), yDist(y, y + h) { }
@@ -19,3 +19,4 @@ void ScatteredParticleSource<P>::generate_new_particles(int num) {
 		particles.push_back(new_particle);
 	}
 }
+*/

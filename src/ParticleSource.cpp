@@ -1,5 +1,5 @@
 #include "ParticleSource.h"
-
+/*
 template<class P>
 ParticleSource<P>::ParticleSource(int density, bool isDynamic, bool constantStream):
 	density{ density }, dynamic{ isDynamic }, constant{ constantStream } { }
@@ -38,4 +38,4 @@ void ParticleSource<P>::draw_particles(SDL_Renderer* ren) {
         particle->draw(ren);
     }
 }
-
+*/
