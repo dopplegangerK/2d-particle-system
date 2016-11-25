@@ -1,6 +1,8 @@
 #include <cmath>
 #include "Vector.h"
 
+Vector::Vector() : x{ 0 }, y{ 0 }, length{ 0 } {}
+
 Vector::Vector(double xCoord, double yCoord) {
 	x = xCoord;
 	y = yCoord;
@@ -61,3 +63,9 @@ Point moveBy(Point p, Vector dir) {
 }
 
 double toDegrees(double radians) { return radians * 180 / PI; }
+
+double distanceSquared(Point a, Point b) {
+	int xDiff = a.x - b.x;
+	int yDiff = a.y - b.y;
+	return xDiff * xDiff + yDiff * yDiff;
+}

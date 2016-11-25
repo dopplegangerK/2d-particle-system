@@ -5,7 +5,7 @@
 
 class Rocket {
 private:
-	const double speed = 4;	//pixels per millisec
+	const double speed = 5;	//pixels per millisec
 	Point loc;
 	Vector direction;
 public:

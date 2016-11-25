@@ -16,7 +16,7 @@ protected:
 public:
 	Star(int x, int y);
 	static std::shared_ptr<Star> createParticleAt(int x, int y);
-	virtual bool is_dead() { return false; }
+	virtual bool is_dead() const { return false; }
 	virtual void draw(SDL_Renderer* ren);
 };
 

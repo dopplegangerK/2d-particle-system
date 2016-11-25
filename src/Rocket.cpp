@@ -6,7 +6,6 @@ Rocket::Rocket(Point loc, double dir) :
 	loc{ loc.x, loc.y }, direction{ Vector::getDir(dir).scaleTo(speed) } {}
 
 void Rocket::setDir(double dir) {
-	std::cout << "Turning train to angle " << dir << "\n";
 	direction = Vector::getDir(dir).scaleTo(speed);
 }
 

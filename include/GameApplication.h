@@ -28,6 +28,7 @@ private:
 	void render();
 	void drawBackground();
 	void drawRocket();
+	void drawEnemies();
 	void drawAll();
 public:
 	GameApplication();

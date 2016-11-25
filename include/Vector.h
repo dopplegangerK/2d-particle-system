@@ -14,6 +14,7 @@ private:
 	double y;
 	double length;
 public:
+	Vector();
 	Vector(double x, double y);
 	Vector(Point start, Point end);
 	int getX() const;
@@ -26,6 +27,11 @@ public:
 	Vector getOpposite() const;
 	Vector scaleBy(double scale);
 	Vector scaleTo(double length);
+
+	Vector operator+ (const Vector& other) const {
+		return Vector(x + other.x, y + other.y);
+	}
+
 	static Vector getDir(double angle);
 
 	void flip();
@@ -34,3 +40,5 @@ public:
 Point moveBy(Point p, Vector dir);
 
 double toDegrees(double radians);
+
+double distanceSquared(Point a, Point b);

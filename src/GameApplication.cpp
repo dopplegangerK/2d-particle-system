@@ -11,6 +11,7 @@
 // Color definitions
 #define BLACK 0xff000000
 #define RED 0xff0000ff
+#define GREEN 0xff00ff00
 
 void logSDLError(const std::string &msg) {
 	std::cout << msg << " error: " << SDL_GetError() << std::endl;
@@ -81,7 +82,11 @@ void GameApplication::drawBackground() {
 
 void GameApplication::drawRocket() {
 	Point loc = game.getRocket().getLoc();
-	boxColor(ren, loc.x - 10, loc.y - 10, loc.x + 10, loc.y + 10, RED);
+	boxColor(ren, loc.x - 10, loc.y - 10, loc.x + 10, loc.y + 10, GREEN);
+}
+
+void GameApplication::drawEnemies() {
+	game.getEnemySpawn().draw_particles(ren);
 }
 
 void GameApplication::drawAll() {
@@ -89,6 +94,7 @@ void GameApplication::drawAll() {
 
 	drawBackground();
 	drawRocket();
+	drawEnemies();
 
 	render();
 }

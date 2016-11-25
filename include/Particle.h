@@ -11,6 +11,7 @@ protected:
 
 public:
     Particle(int x, int y);
+	virtual ~Particle() {}
 
 	// NOTE: every implaementable subclass of Particle should implement its own version of this method.
 	// This one just returns a default unique_ptr
@@ -21,7 +22,7 @@ public:
     //setp the particle forward in time
     //override unless the particle is stationary
     virtual void step(double seconds);
-	virtual bool is_dead() = 0;
+	virtual bool is_dead() const = 0;
 };
 
 #endif
