@@ -17,19 +17,22 @@ void Enemy::step(double seconds) {
 	Vector repel_force;
 	double distance_squared;
 	for (std::shared_ptr<Enemy> e : Enemy::all_enemies) {
+		if (e.get() == this)
+			continue;
+
 		distance_squared = distanceSquared(Point{ x, y }, Point{ e->x, e->y });
 		if (distance_squared < (max_affecting_distance * max_affecting_distance)) {
-			repel_force = Vector(Point{ e->x, e->y }, Point{ x, y });
-			repel_force = repel_force.scaleTo(repel/* / repel_force.getLength()*/);
-			acceleration = acceleration + repel_force;
+			repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * repel / distance_squared);
 		}
+	}
+	if (repel_force.getLength() > 0) {
+		repel_force.scaleBy(1 / (all_enemies.size() - 1));
+		acceleration = acceleration + repel_force;
 	}
 
 	Vector velocity = acceleration/*.scaleTo(speed)*/;
 	x += velocity.getX();
 	y += velocity.getY();
-
-	std::cout << "New enemy location: " << x << ", " << y << "\n";
 }
 
 void Enemy::draw(SDL_Renderer* ren) {
@@ -40,6 +43,18 @@ EnemySpawn::EnemySpawn(int screenWidth, int screenHeight) :
 	RingParticleSource( screenWidth / 2, screenHeight / 2,
 		(int)sqrt(distanceSquared(Point{ screenWidth/2, screenHeight/2 }, Point{ 0, 0 })) + 50,
 		10, true, true) {}
+
+void EnemySpawn::generate_new_particles(int num) {
+	int n = particles.size();
+	RingParticleSource::generate_new_particles(num);
+	int x = n;
+	std::list<std::shared_ptr<Enemy>>::reverse_iterator it = particles.rbegin();
+	while (x < particles.size()) {
+		Enemy::all_enemies.push_back(*it);
+		it++;
+		x++;
+	}
+}
 
 void EnemySpawn::initialize_particles() {
 	generate_new_particles(1);
