@@ -3,14 +3,21 @@
 
 #include "Vector.h"
 #include <SDL.h>
+#include <Box2D\Box2D.h>
 
 class Rocket {
 private:
-	const double speed = 5;	//pixels per millisec
+	const double speed = 500;
 	Point loc;
 	Vector direction;
 
 	SDL_Rect* rect;
+
+	static b2World* world;
+	b2Body* body;
+	b2Shape* shape;
+
+	void makePhysicsAttributes();
 public:
 	//drawing stuff
 	static constexpr char* sprite = "../sprites/PNG/playerShip3_blue.png";
@@ -28,6 +35,8 @@ public:
 	Point getLoc() const;
 	double getDir() const;
 	void draw(SDL_Renderer* ren);
+
+	static void setPhysicsWorld(b2World* world);
 };
 
 #endif

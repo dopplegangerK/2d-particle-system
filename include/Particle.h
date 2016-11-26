@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <SDL.h>
+#include <Box2D/Box2D.h>
 
 class Particle {
 protected:
@@ -23,6 +24,16 @@ public:
     //override unless the particle is stationary
     virtual void step(double seconds);
 	virtual bool is_dead() const = 0;
+};
+
+class PhysicsParticle: public Particle {
+protected:
+	b2World* world;
+	b2Body* body;
+	b2Shape* shape;
+public:
+	PhysicsParticle(int x, int y, b2World* world, b2Body* body, b2Shape* shape, float32 density = 0, float32 friction = 0, float32 restitution = 1);
+	virtual ~PhysicsParticle();
 };
 
 #endif

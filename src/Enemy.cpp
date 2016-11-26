@@ -4,16 +4,32 @@
 
 Rocket* Enemy::player = nullptr;
 std::vector<std::shared_ptr<Enemy>> Enemy::all_enemies = std::vector<std::shared_ptr<Enemy>>();
+b2World* Enemy::enemy_world = nullptr;
 
 int Enemy::height = 0;
 int Enemy::width = 0;
 SDL_Texture* Enemy::tex = nullptr;
 
-Enemy::Enemy(int x, int y) : Particle(x, y), direction{ 0, 0 } {
+Enemy::Enemy(int x, int y) :
+	PhysicsParticle(x, y, enemy_world, makeEnemyBody(x, y), makeEnemyShape()),
+	direction{ 0, 0 } {
 	speed = rand() % (max_speed - min_speed) + min_speed;
 	rect = new SDL_Rect;
 	rect->w = width;
 	rect->h = height;
+}
+
+b2Body* Enemy::makeEnemyBody(int x, int y) {
+	b2BodyDef bodyDef;
+	bodyDef.position.Set((float32)x, (float32)y);
+	bodyDef.type = b2_kinematicBody;
+	return enemy_world->CreateBody(&bodyDef);
+}
+
+b2Shape* Enemy::makeEnemyShape() {
+	b2CircleShape* circle = new b2CircleShape();
+	circle->m_radius = (float32)(width / 2);
+	return circle;
 }
 
 Enemy::~Enemy() {
@@ -21,8 +37,13 @@ Enemy::~Enemy() {
 }
 
 void Enemy::step(double seconds) {
-	Vector acceleration(Point{ x, y }, player->getLoc());
-	acceleration = acceleration.scaleTo(speed);
+	//get current location from physics body
+	x = (int)body->GetWorldCenter().x;
+	y = (int)body->GetWorldCenter().y;
+
+	//calculate new velocity
+	Vector velocity(Point{ x, y }, player->getLoc());
+	velocity = velocity.scaleTo(speed);
 
 	// check for nearby enemies (again, replace this with spatial data structure later)
 	Vector repel_force;
@@ -33,22 +54,20 @@ void Enemy::step(double seconds) {
 
 		distance_squared = distanceSquared(Point{ x, y }, Point{ e->x, e->y });
 		if (distance_squared < (max_affecting_distance * max_affecting_distance)) {
-			repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * repel / distance_squared);
-			//repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * (1 - sqrt(distance_squared) / max_affecting_distance));
+			//repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * repel / distance_squared);
+			repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * (1 - sqrt(distance_squared) / max_affecting_distance));
 		}
 	}
 	if (repel_force.getLength() > 0) {
 		repel_force.scaleBy(1 / (all_enemies.size() - 1));
-		acceleration = acceleration + repel_force;
 
 		if (repel_force.getLength() > speed * 2) {
 			repel_force.scaleTo(speed * 2);
 		}
+		velocity = velocity + repel_force;
 	}
 
-	Vector velocity = acceleration/*.scaleTo(speed)*/;
-	x += velocity.getX();
-	y += velocity.getY();
+	body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
 }
 
 void Enemy::draw(SDL_Renderer* ren) {

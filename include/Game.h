@@ -3,11 +3,13 @@
 
 #include "Rocket.h"
 #include "Enemy.h"
+#include <Box2D\Box2D.h>
 
 class Game {
 private:
 	Rocket rocket;
 	EnemySpawn enemySpawn;
+	b2World* world;
 public:
 	Game();
 	void makeNewRocket();
