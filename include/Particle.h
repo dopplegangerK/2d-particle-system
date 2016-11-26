@@ -26,13 +26,20 @@ public:
 	virtual bool is_dead() const = 0;
 };
 
+struct PhysicsData {
+	int type;	//store an enum or something
+	void* object;
+};
+
 class PhysicsParticle: public Particle {
 protected:
+	//used in PhysicsData to store info about this object in the b2Fixture
+	int type;
 	b2World* world;
 	b2Body* body;
 	b2Shape* shape;
 public:
-	PhysicsParticle(int x, int y, b2World* world, b2Body* body, b2Shape* shape, float32 density = 0, float32 friction = 0, float32 restitution = 1);
+	PhysicsParticle(int x, int y, b2World* world, b2Body* body, b2Shape* shape, int type = 0, float32 density = 0, float32 friction = 0, float32 restitution = 1);
 	virtual ~PhysicsParticle();
 };
 

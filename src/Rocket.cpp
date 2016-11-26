@@ -1,4 +1,5 @@
 #include "Rocket.h"
+#include "Particle.h"
 
 #include <iostream>
 
@@ -34,7 +35,7 @@ void Rocket::makePhysicsAttributes() {
 	//body
 	b2BodyDef bodyDef;
 	bodyDef.position.Set((float32)loc.x, (float32)loc.y);
-	bodyDef.type = b2_kinematicBody;
+	bodyDef.type = b2_dynamicBody;
 	body = world->CreateBody(&bodyDef);
 	//shape (create a triangle)
 	b2Vec2 vertices[3];
@@ -45,7 +46,13 @@ void Rocket::makePhysicsAttributes() {
 	pShape->Set(vertices, 3);
 	shape = pShape;
 	//create fixture
-	body->CreateFixture(shape, 0);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = shape;
+	fixtureDef.density = 0;
+	fixtureDef.friction = 0;
+	fixtureDef.restitution = 1;
+	fixtureDef.userData = new PhysicsData{ 2, this };
+	body->CreateFixture(&fixtureDef);
 }
 
 Rocket::~Rocket() {

@@ -9,6 +9,7 @@
 #include <vector>
 #include <SDL.h>
 
+//type = 1
 class Enemy: public PhysicsParticle {
 private:
 	// Replace this with some sort of spacial data structure later (quadtree?)
@@ -47,11 +48,13 @@ public:
 
 	virtual void draw(SDL_Renderer* ren);
 	virtual void step(double seconds);
-	virtual bool is_dead() const { return hp == 0; }
+	virtual bool is_dead() const { return hp <= 0; }
 
 	static std::shared_ptr<Enemy> createParticleAt(int x, int y) { return std::make_shared<Enemy>(x, y); }
 	static void setPlayer(Rocket* r) { player = r; }
 	static void setPhysicsWorld(b2World* w) { enemy_world = w; }
+
+	void hit(int damage);
 };
 
 class EnemySpawn : public RingParticleSource<Enemy> {

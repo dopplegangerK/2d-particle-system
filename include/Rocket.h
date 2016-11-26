@@ -5,6 +5,7 @@
 #include <SDL.h>
 #include <Box2D\Box2D.h>
 
+// type = 2
 class Rocket {
 private:
 	const double speed = 500;

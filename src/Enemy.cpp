@@ -11,7 +11,7 @@ int Enemy::width = 0;
 SDL_Texture* Enemy::tex = nullptr;
 
 Enemy::Enemy(int x, int y) :
-	PhysicsParticle(x, y, enemy_world, makeEnemyBody(x, y), makeEnemyShape()),
+	PhysicsParticle(x, y, enemy_world, makeEnemyBody(x, y), makeEnemyShape(), 1),
 	direction{ 0, 0 } {
 	speed = rand() % (max_speed - min_speed) + min_speed;
 	rect = new SDL_Rect;
@@ -22,7 +22,7 @@ Enemy::Enemy(int x, int y) :
 b2Body* Enemy::makeEnemyBody(int x, int y) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set((float32)x, (float32)y);
-	bodyDef.type = b2_kinematicBody;
+	bodyDef.type = b2_dynamicBody;
 	return enemy_world->CreateBody(&bodyDef);
 }
 
@@ -112,10 +112,16 @@ void EnemySpawn::step(double seconds) {
 		std::shared_ptr<Enemy> enemy = *it;
 		enemy->step(seconds);
 		if (enemy->is_dead()) {
-			particles.erase(it);
+			std::list<std::shared_ptr<Enemy>>::iterator dead = it;
+			it++;
+			particles.erase(dead);
 		}
 		else {
 			it++;
 		}
 	}
+}
+
+void Enemy::hit(int damage) {
+	hp -= damage;
 }

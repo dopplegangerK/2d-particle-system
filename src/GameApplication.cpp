@@ -83,8 +83,6 @@ GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, s
 	createRenderer();
 	loadClassSprite<Rocket>();
 	loadClassSprite<Enemy>();
-
-	game.makeNewRocket();
 }
 
 /***************
@@ -137,6 +135,8 @@ Uint32 tick(Uint32 interval, void* args) {
 void GameApplication::run() {
 	if (!success)
 		return;
+
+	game.startGame();
 
 	//start the update timer
 	SDL_AddTimer(TICK, (SDL_TimerCallback)tick, &game);
