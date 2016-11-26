@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <SDL2_gfxPrimitives.h>
+#include <SDL_image.h>
 
 #define FAIL { success = false; return; }
 
@@ -58,11 +59,32 @@ void GameApplication::createRenderer() {
 	}
 }
 
+SDL_Texture* loadTexture(const char* file, SDL_Renderer *ren) {
+	SDL_Texture *texture = IMG_LoadTexture(ren, file);
+	if (texture == nullptr) {
+		logSDLError("LoadTexture");
+	}
+	return texture;
+}
+
+template <class T>
+void GameApplication::loadClassSprite() {
+	T::tex = loadTexture(T::sprite, ren);
+	int w, h;
+	SDL_QueryTexture(T::tex, NULL, NULL, &w, &h);
+	T::width = w/2;
+	T::height = h/2;
+}
+
 GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, screenHeight, 100)  {
 	stars.initialize_particles();
 	initSDL();
 	createWindow();
 	createRenderer();
+	loadClassSprite<Rocket>();
+	loadClassSprite<Enemy>();
+
+	game.makeNewRocket();
 }
 
 /***************
@@ -81,8 +103,9 @@ void GameApplication::drawBackground() {
 }
 
 void GameApplication::drawRocket() {
+	game.getRocket().draw(ren);
 	Point loc = game.getRocket().getLoc();
-	boxColor(ren, loc.x - 10, loc.y - 10, loc.x + 10, loc.y + 10, GREEN);
+	//boxColor(ren, loc.x - 10, loc.y - 10, loc.x + 10, loc.y + 10, GREEN);
 }
 
 void GameApplication::drawEnemies() {

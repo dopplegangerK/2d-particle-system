@@ -17,7 +17,7 @@ private:
 	//maximum distance two enemies can be from each other before they start to repel
 	static constexpr double max_affecting_distance = 100.0;
 	//coefficient for how much enemies repel each other
-	static constexpr double repel = 100;
+	static constexpr double repel = 50;
 
 	static constexpr int max_speed = 5;
 	static constexpr int min_speed = 3;
@@ -25,11 +25,19 @@ private:
 	Vector direction;
 	int speed;
 	int hp = 3;
+
+	SDL_Rect* rect;
 public:
+	//drawing stuff (public so we can set it from outside)
+	static constexpr char* sprite = "../sprites/PNG/ufoGreen.png";
+	static SDL_Texture* tex;
+	static int width;
+	static int height;
+
 	friend class EnemySpawn;
 
 	Enemy(int x, int y);
-	virtual ~Enemy() {}
+	virtual ~Enemy();
 
 	virtual void draw(SDL_Renderer* ren);
 	virtual void step(double seconds);

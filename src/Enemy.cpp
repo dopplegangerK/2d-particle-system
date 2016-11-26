@@ -5,8 +5,19 @@
 Rocket* Enemy::player = nullptr;
 std::vector<std::shared_ptr<Enemy>> Enemy::all_enemies = std::vector<std::shared_ptr<Enemy>>();
 
+int Enemy::height = 0;
+int Enemy::width = 0;
+SDL_Texture* Enemy::tex = nullptr;
+
 Enemy::Enemy(int x, int y) : Particle(x, y), direction{ 0, 0 } {
 	speed = rand() % (max_speed - min_speed) + min_speed;
+	rect = new SDL_Rect;
+	rect->w = width;
+	rect->h = height;
+}
+
+Enemy::~Enemy() {
+	delete rect;
 }
 
 void Enemy::step(double seconds) {
@@ -23,11 +34,16 @@ void Enemy::step(double seconds) {
 		distance_squared = distanceSquared(Point{ x, y }, Point{ e->x, e->y });
 		if (distance_squared < (max_affecting_distance * max_affecting_distance)) {
 			repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * repel / distance_squared);
+			//repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * (1 - sqrt(distance_squared) / max_affecting_distance));
 		}
 	}
 	if (repel_force.getLength() > 0) {
 		repel_force.scaleBy(1 / (all_enemies.size() - 1));
 		acceleration = acceleration + repel_force;
+
+		if (repel_force.getLength() > speed * 2) {
+			repel_force.scaleTo(speed * 2);
+		}
 	}
 
 	Vector velocity = acceleration/*.scaleTo(speed)*/;
@@ -36,7 +52,10 @@ void Enemy::step(double seconds) {
 }
 
 void Enemy::draw(SDL_Renderer* ren) {
-	filledCircleColor(ren, x, y, 15, 0xff0000ff);
+	//filledCircleColor(ren, x, y, enemy_width/2, 0xff0000ff);
+	rect->x = x - width / 2;
+	rect->y = y - height / 2;
+	SDL_RenderCopy(ren, tex, NULL, rect);
 }
 
 EnemySpawn::EnemySpawn(int screenWidth, int screenHeight) :
@@ -47,7 +66,7 @@ EnemySpawn::EnemySpawn(int screenWidth, int screenHeight) :
 void EnemySpawn::generate_new_particles(int num) {
 	int n = particles.size();
 	RingParticleSource::generate_new_particles(num);
-	int x = n;
+	size_t x = n;
 	std::list<std::shared_ptr<Enemy>>::reverse_iterator it = particles.rbegin();
 	while (x < particles.size()) {
 		Enemy::all_enemies.push_back(*it);

@@ -10,8 +10,9 @@ private:
 	EnemySpawn enemySpawn;
 public:
 	Game();
+	void makeNewRocket();
 	void update(double seconds);
-	const Rocket& getRocket();
+	Rocket& getRocket();
 	void turnRocket(double newDir);
 	EnemySpawn& getEnemySpawn();
 };

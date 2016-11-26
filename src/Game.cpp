@@ -1,7 +1,11 @@
 #include "Game.h"
 
-Game::Game() : rocket{ {512, 320}, 0 }, enemySpawn(1024, 640) {
+Game::Game() : enemySpawn(1024, 640) {
 	Enemy::setPlayer(&rocket);
+}
+
+void Game::makeNewRocket() {
+	rocket = Rocket({ 512, 320 }, 0);
 }
 
 void Game::update(double seconds) {
@@ -9,7 +13,7 @@ void Game::update(double seconds) {
 	enemySpawn.step(seconds);
 }
 
-const Rocket& Game::getRocket() { return rocket; }
+Rocket& Game::getRocket() { return rocket; }
 
 void Game::turnRocket(double newDir) { rocket.setDir(newDir); }
 
