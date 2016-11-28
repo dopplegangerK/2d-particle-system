@@ -19,7 +19,7 @@ private:
 	static b2Shape* makeBulletShape();
 public:
 	//drawing stuff
-	static constexpr char* sprite = "../sprites/PNG/Lasers/laserRed07.png";
+	static constexpr char* sprite = "../../demo/sprites/laserRed07.png";
 	static SDL_Texture* tex;
 	static int width;
 	static int height;

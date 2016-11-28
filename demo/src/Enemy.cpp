@@ -74,8 +74,8 @@ void Enemy::step(double seconds) {
 
 void Enemy::draw(SDL_Renderer* ren) {
 	//filledCircleColor(ren, x, y, enemy_width/2, 0xff0000ff);
-	rect->x = x - width / 2;
-	rect->y = y - height / 2;
+	rect->x = (int)x - width / 2;
+	rect->y = (int)y - height / 2;
 	SDL_RenderCopy(ren, tex, NULL, rect);
 }
 
@@ -122,7 +122,7 @@ void EnemySpawn::step(double seconds) {
 			enemy->step(seconds);
 			if (enemy->is_dead()) {
 				//create an explosion in the place of the dead enemy
-				explosions.push_back(Explosion(enemy->x, enemy->y));
+				explosions.push_back(Explosion((int)enemy->x, (int)enemy->y));
 
 				it = particles.erase(it);
 			}

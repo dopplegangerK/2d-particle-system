@@ -27,7 +27,7 @@ private:
 	void makePhysicsAttributes();
 public:
 	//drawing stuff
-	static constexpr char* sprite = "../sprites/PNG/playerShip3_blue.png";
+	static constexpr char* sprite = "../../demo/sprites/playerShip3_blue.png";
 	static SDL_Texture* tex;
 	static int width;
 	static int height;

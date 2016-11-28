@@ -36,7 +36,7 @@ private:
 	static b2Shape* makeEnemyShape();
 public:
 	//drawing stuff (public so we can set it from outside)
-	static constexpr char* sprite = "../sprites/PNG/ufoGreen.png";
+	static constexpr char* sprite = "../../demo/sprites/ufoGreen.png";
 	static SDL_Texture* tex;
 	static int width;
 	static int height;

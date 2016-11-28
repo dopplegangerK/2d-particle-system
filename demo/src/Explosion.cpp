@@ -35,7 +35,7 @@ std::shared_ptr<ExplosionParticle> ExplosionParticle::createParticleAt(int x, in
 	int r = rand();
 	double lifespan = (r % 75 + 75) / 100.0 + (r % 10) / 10.0;
 
-	int dist = rand() % (explosion_radius - 100) + 100;
+	int dist = rand() % (explosion_radius /2 ) + explosion_radius/2;
 
 	r = rand() % 4;
 	uint32_t color;

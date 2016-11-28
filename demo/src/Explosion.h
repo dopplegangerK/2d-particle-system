@@ -6,7 +6,7 @@
 
 class ExplosionParticle : public TrajectoryParticle {
 private:
-	static constexpr int explosion_radius = 150;
+	static constexpr int explosion_radius = 100;
 	static constexpr double total_time = 1.0;
 	static constexpr int max_particle_radius = 6;
 	static constexpr int min_particle_radius = 1;
