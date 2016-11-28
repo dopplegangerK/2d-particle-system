@@ -43,14 +43,14 @@ void ParticleSource<P>::step(double seconds) {
 			std::shared_ptr<P> particle = *it;
 			particle->step(seconds);
 			if (particle->is_dead()) {
-				particles.erase(it);
+				it = particles.erase(it);
 				dead++;
 			}
 			else {
 				it++;
 			}
 		}
-		if (dead > 0)
+		if (constant && dead > 0)
 			generate_new_particles(dead);
 	}
 }

@@ -1,6 +1,7 @@
 #ifndef _PARTICLE_H_
 #define _PARTICLE_H_
 
+#include "Vector.h"
 #include <memory>
 #include <SDL.h>
 #include <Box2D/Box2D.h>
@@ -31,6 +32,7 @@ struct PhysicsData {
 	void* object;
 };
 
+// Superclass for particles that are tied to the physics engine
 class PhysicsParticle: public Particle {
 protected:
 	//used in PhysicsData to store info about this object in the b2Fixture
@@ -38,9 +40,36 @@ protected:
 	b2World* world;
 	b2Body* body;
 	b2Shape* shape;
+	b2Fixture* fixture;
 public:
-	PhysicsParticle(int x, int y, b2World* world, b2Body* body, b2Shape* shape, int type = 0, float32 density = 0, float32 friction = 0, float32 restitution = 1);
+	PhysicsParticle(int x, int y, b2World* world, b2Body* body, b2Shape* shape, int type = 0, float32 density = 0, float32 friction = 0, float32 restitution = 1, bool isSensor = false);
 	virtual ~PhysicsParticle();
+	virtual void step(double seconds);
+};
+
+// Particle that continues along a given trajectory with a given constant speed
+class TrajectoryParticle : public Particle {
+protected:
+	Vector direction;
+	int speed;
+public:
+	TrajectoryParticle(int x, int y, double angle, int speed);
+	virtual ~TrajectoryParticle() {}
+	virtual void step(double seconds);
+};
+
+// Same as above, but is also connected to the physics engine.
+// The particle is given an initial velocity and relies on the physics engine
+// to continue its movement.
+class PhysicsTrajectoryParticle : public PhysicsParticle {
+protected:
+	int speed;
+	double angle;
+public:
+	PhysicsTrajectoryParticle(int x, int y, double angle, int speed, b2World* world,
+		b2Body* body, b2Shape* shape, int type = 0, float32 density = 0, float32 friction = 0,
+		float32 restitution = 1, bool isSensor = false);
+	virtual ~PhysicsTrajectoryParticle() {}
 };
 
 #endif

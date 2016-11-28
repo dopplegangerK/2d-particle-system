@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Bullet.h"
 
 #include <iostream>
 
@@ -6,6 +7,7 @@ Game::Game() : enemySpawn(1024, 640), world(new b2World(b2Vec2(0, 0))) {
 	Enemy::setPlayer(&rocket);
 	Enemy::setPhysicsWorld(world);
 	Rocket::setPhysicsWorld(world);
+	Bullet::setPhysicsWorld(world);
 }
 
 void Game::startGame() {
@@ -21,25 +23,41 @@ void Game::stepPhysics(double seconds) {
 		//std::cout << "collision\n";
 		PhysicsData* aObj = (PhysicsData*)A->GetUserData();
 		PhysicsData* bObj = (PhysicsData*)B->GetUserData();
-		//For now, just reduce life if the rocket was hit
-		if (aObj->type == ROCKET) {
-			life--;
-			if (bObj->type == ENEMY) {
-				Enemy* e = (Enemy*)bObj->object;
-				e->hit(3);
-			}
-		} else if (bObj->type == ROCKET) {
-			life--;
-			if (aObj->type == ENEMY) {
-				Enemy* e = (Enemy*)aObj->object;
-				e->hit(3);
-			}
-		}
+
+		//Collision between rocket and enemy
+		if (aObj->type == ROCKET && bObj->type == ENEMY)
+			enemyHitPlayer((Enemy*)bObj->object);
+		else if (bObj->type == ROCKET && aObj->type == ENEMY)
+			enemyHitPlayer((Enemy*)aObj->object);
+
+		//Collision between bullet and enemy
+		if (aObj->type == BULLET && bObj->type == ENEMY)
+			bulletHitEnemy((Enemy*)bObj->object, (Bullet*)aObj->object);
+		else if(bObj->type == BULLET && aObj->type == ENEMY)
+			bulletHitEnemy((Enemy*)aObj->object, (Bullet*)bObj->object);
 	}
 }
 
+void Game::enemyHitPlayer(Enemy* e) {
+	std::cout << "I've been hit\n";
+	life--;
+	e->hit(3);
+}
+
+void Game::bulletHitEnemy(Enemy* e, Bullet* b) {
+	b->hit();
+	e->hit(3);
+}
+
 void Game::update(double seconds) {
+	physics_is_running = true;
 	stepPhysics(seconds);
+	physics_is_running = false;
+
+	while(bullets > 0) {
+		rocket.shoot();
+		bullets--;
+	}
 
 	if (life == 0) {
 		endGame();

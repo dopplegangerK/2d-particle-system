@@ -1,5 +1,5 @@
-#ifndef _PARTICLE_SOURCE_H_
-#define _PARTICLE_SOURCE_H_
+#ifndef _POINT_PARTICLE_SOURCE_H_
+#define _POINT_PARTICLE_SOURCE_H_
 
 #include "ParticleSource.h"
 
@@ -9,13 +9,14 @@
  */
 
 template <class P>
-class PointParticleSource : public ParticleSource {
+class PointParticleSource : public ParticleSource<P> {
 protected:
 	int x, y;
 	virtual void generate_new_particles(int num);
 public:
 	PointParticleSource(int x, int y, int density, bool dynamic = true, bool constant = false);
-	virtual ~PointParticleSource();
+	virtual ~PointParticleSource() {}
+	virtual void moveTo(int x, int y);
 };
 
 template<class P>
@@ -28,6 +29,12 @@ void PointParticleSource<P>::generate_new_particles(int num) {
 		std::shared_ptr<P> new_particle = P::createParticleAt(x, y);
 		particles.push_back(new_particle);
 	}
+}
+
+template <class P>
+void PointParticleSource<P>::moveTo(int newX, int newY) {
+	x = newX;
+	y = newY;
 }
 
 #endif

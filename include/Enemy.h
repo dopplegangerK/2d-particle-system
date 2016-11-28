@@ -13,7 +13,7 @@
 class Enemy: public PhysicsParticle {
 private:
 	// Replace this with some sort of spacial data structure later (quadtree?)
-	static std::vector<std::shared_ptr<Enemy>> all_enemies;
+	//static std::vector<std::shared_ptr<Enemy>> all_enemies;
 	//keep the player's location so we know where to go
 	static Rocket* player;
 	//maximum distance two enemies can be from each other before they start to repel
@@ -21,8 +21,8 @@ private:
 	//coefficient for how much enemies repel each other
 	static constexpr double repel = 600;
 
-	static constexpr int max_speed = 300;
-	static constexpr int min_speed = 150;
+	static constexpr int max_speed = 20;
+	static constexpr int min_speed = 10;
 
 	Vector direction;
 	int speed;
@@ -33,7 +33,6 @@ private:
 	static b2World* enemy_world;
 	static b2Body* makeEnemyBody(int x, int y);
 	static b2Shape* makeEnemyShape();
-	static b2FixtureDef makeEnemyFixtureDef();
 public:
 	//drawing stuff (public so we can set it from outside)
 	static constexpr char* sprite = "../sprites/PNG/ufoGreen.png";

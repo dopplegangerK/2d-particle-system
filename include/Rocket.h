@@ -2,21 +2,27 @@
 #define _ROCKET_H_
 
 #include "Vector.h"
+#include "Bullet.h"
 #include <SDL.h>
 #include <Box2D\Box2D.h>
 
 // type = 2
 class Rocket {
 private:
-	const double speed = 500;
+	const double speed = 30;
 	Point loc;
 	Vector direction;
+
+	bool fire = false;
 
 	SDL_Rect* rect;
 
 	static b2World* world;
 	b2Body* body;
 	b2Shape* shape;
+	b2Fixture* fixture;
+
+	BulletSource gun;
 
 	void makePhysicsAttributes();
 public:
@@ -32,6 +38,7 @@ public:
 	~Rocket();
 	Rocket& operator= (const Rocket& r);
 	void step(double seconds);
+	void shoot();
 	void setDir(double dir);
 	Point getLoc() const;
 	double getDir() const;

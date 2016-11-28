@@ -83,6 +83,9 @@ GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, s
 	createRenderer();
 	loadClassSprite<Rocket>();
 	loadClassSprite<Enemy>();
+	loadClassSprite<Bullet>();
+	Bullet::width *= 2;
+	Bullet::height *= 2;
 }
 
 /***************
@@ -145,6 +148,7 @@ void GameApplication::run() {
 	//render/input loop
 	SDL_Event e;
 	bool quit = false;
+	bool mouseDown = false;
 	while (!quit) {
 		while (SDL_PollEvent(&e)) {
 			switch (e.type) {
@@ -155,7 +159,17 @@ void GameApplication::run() {
 				int mouseX, mouseY; 
 				SDL_GetMouseState(&mouseX, &mouseY);
 				game.turnRocket(Vector(game.getRocket().getLoc(), { mouseX, mouseY }).getAngle());
+				break;
 			}
+			case SDL_MOUSEBUTTONDOWN:
+				if (!mouseDown) {
+					game.getRocket().shoot();
+					mouseDown = true;
+				}
+				break;
+			case SDL_MOUSEBUTTONUP:
+				mouseDown = false;
+				break;
 			default:
 				break;
 			}

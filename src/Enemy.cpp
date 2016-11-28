@@ -3,7 +3,7 @@
 #include <SDL2_gfxPrimitives.h>
 
 Rocket* Enemy::player = nullptr;
-std::vector<std::shared_ptr<Enemy>> Enemy::all_enemies = std::vector<std::shared_ptr<Enemy>>();
+//std::vector<std::shared_ptr<Enemy>> Enemy::all_enemies = std::vector<std::shared_ptr<Enemy>>();
 b2World* Enemy::enemy_world = nullptr;
 
 int Enemy::height = 0;
@@ -11,7 +11,7 @@ int Enemy::width = 0;
 SDL_Texture* Enemy::tex = nullptr;
 
 Enemy::Enemy(int x, int y) :
-	PhysicsParticle(x, y, enemy_world, makeEnemyBody(x, y), makeEnemyShape(), 1),
+	PhysicsParticle(x, y, enemy_world, makeEnemyBody(x, y), makeEnemyShape(), 1, 0, 0, 1, true),
 	direction{ 0, 0 } {
 	speed = rand() % (max_speed - min_speed) + min_speed;
 	rect = new SDL_Rect;
@@ -21,14 +21,14 @@ Enemy::Enemy(int x, int y) :
 
 b2Body* Enemy::makeEnemyBody(int x, int y) {
 	b2BodyDef bodyDef;
-	bodyDef.position.Set((float32)x, (float32)y);
+	bodyDef.position.Set((float32)x/10, (float32)y/10);
 	bodyDef.type = b2_dynamicBody;
 	return enemy_world->CreateBody(&bodyDef);
 }
 
 b2Shape* Enemy::makeEnemyShape() {
 	b2CircleShape* circle = new b2CircleShape();
-	circle->m_radius = (float32)(width / 2);
+	circle->m_radius = (float32)(width / 20);
 	return circle;
 }
 
@@ -37,14 +37,15 @@ Enemy::~Enemy() {
 }
 
 void Enemy::step(double seconds) {
-	//get current location from physics body
-	x = (int)body->GetWorldCenter().x;
-	y = (int)body->GetWorldCenter().y;
+	PhysicsParticle::step(seconds);
 
 	//calculate new velocity
 	Vector velocity(Point{ x, y }, player->getLoc());
 	velocity = velocity.scaleTo(speed);
 
+	//TODO: do this, but use another fixture and the collision engine to figure
+	//out what is nearby
+	/*
 	// check for nearby enemies (again, replace this with spatial data structure later)
 	Vector repel_force;
 	double distance_squared;
@@ -66,6 +67,7 @@ void Enemy::step(double seconds) {
 		}
 		velocity = velocity + repel_force;
 	}
+	*/
 
 	body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
 }
@@ -85,6 +87,7 @@ EnemySpawn::EnemySpawn(int screenWidth, int screenHeight) :
 void EnemySpawn::generate_new_particles(int num) {
 	int n = particles.size();
 	RingParticleSource::generate_new_particles(num);
+	/*
 	size_t x = n;
 	std::list<std::shared_ptr<Enemy>>::reverse_iterator it = particles.rbegin();
 	while (x < particles.size()) {
@@ -92,6 +95,7 @@ void EnemySpawn::generate_new_particles(int num) {
 		it++;
 		x++;
 	}
+	*/
 }
 
 void EnemySpawn::initialize_particles() {

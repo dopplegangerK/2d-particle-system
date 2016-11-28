@@ -5,6 +5,7 @@
 #include "Vector.h"
 #include <cmath>
 #include <iostream>
+#include <SDL2_gfxPrimitives.h>
 
 /*
  * Generate particles randomly placed along the perimiter of a circle
@@ -25,7 +26,7 @@ public:
 
 template <class P>
 void RingParticleSource<P>::generate_new_particles(int num) {
-	for (int x = 0; x < num; x++) {
+	for (int k = 0; k < num; k++) {
 		double angle = 2 * PI * ((rand() % 200) / 200.0);
 		int myX = (int)(x + cos(angle) * radius);
 		int myY = (int)(y + sin(angle) * radius);

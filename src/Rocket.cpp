@@ -11,13 +11,14 @@ b2World* Rocket::world = nullptr;
 
 Rocket::Rocket() : Rocket(Point{ 0, 0 }, 0) {}
 
-Rocket::Rocket(const Rocket& r) : loc{ r.loc.x, r.loc.y }, direction{ r.direction }, rect{ new SDL_Rect } {
+Rocket::Rocket(const Rocket& r) : loc{ r.loc.x, r.loc.y }, direction{ r.direction },
+		rect{ new SDL_Rect }, gun(r.gun) {
 	rect->w = width;
 	rect->h = height;
 }
 
 Rocket::Rocket(Point loc, double dir) :
-		loc{ loc.x, loc.y }, direction{ Vector::getDir(dir).scaleTo(speed) } {
+		loc{ loc.x, loc.y }, direction{ Vector::getDir(dir).scaleTo(speed) }, gun{ loc.x, loc.y } {
 	rect = new SDL_Rect;
 	rect->w = width;
 	rect->h = height;
@@ -34,13 +35,13 @@ Rocket::Rocket(Point loc, double dir) :
 void Rocket::makePhysicsAttributes() {
 	//body
 	b2BodyDef bodyDef;
-	bodyDef.position.Set((float32)loc.x, (float32)loc.y);
+	bodyDef.position.Set((float32)loc.x/10, (float32)loc.y/10);
 	bodyDef.type = b2_dynamicBody;
 	body = world->CreateBody(&bodyDef);
 	//shape (create a triangle)
 	b2Vec2 vertices[3];
-	vertices[0].Set((float32)height, (float32)width / 2);
-	vertices[1].Set(0, (float32)width);
+	vertices[0].Set((float32)height/10, (float32)width / 20);
+	vertices[1].Set(0, (float32)width/10);
 	vertices[2].Set(0, 0);
 	b2PolygonShape* pShape = new b2PolygonShape();
 	pShape->Set(vertices, 3);
@@ -52,7 +53,12 @@ void Rocket::makePhysicsAttributes() {
 	fixtureDef.friction = 0;
 	fixtureDef.restitution = 1;
 	fixtureDef.userData = new PhysicsData{ 2, this };
-	body->CreateFixture(&fixtureDef);
+	fixture = body->CreateFixture(&fixtureDef);
+	//filter out collisions with bullets
+	b2Filter filter;
+	filter.categoryBits = 0x0002;
+	filter.maskBits = ~0x0004;
+	fixture->SetFilterData(filter);
 }
 
 Rocket::~Rocket() {
@@ -67,6 +73,7 @@ Rocket::~Rocket() {
 Rocket& Rocket::operator= (const Rocket& r) {
 	loc = r.loc;
 	direction = r.direction;
+	gun = r.gun;
 	if (rect == nullptr && r.rect != nullptr) {
 		rect = new SDL_Rect;
 	}
@@ -84,18 +91,29 @@ void Rocket::setDir(double dir) {
 void Rocket::step(double seconds) {
 	if (body == nullptr)
 		return;
-	loc.x = (int)body->GetWorldCenter().x;
-	loc.y = (int)body->GetWorldCenter().y;
+	loc.x = (int)(body->GetWorldCenter().x * 10);
+	loc.y = (int)(body->GetWorldCenter().y * 10);
 	body->SetLinearVelocity(b2Vec2((float32)direction.getX(), (float32)direction.getY()));
-	//loc = moveBy(loc, direction);
-	//std::cout << "location: " << loc.x << ", " << loc.y << "\n";
+	body->SetTransform(body->GetPosition(), (float32)direction.getAngle());
+
+	if (fire) {
+		gun.moveTo(loc.x, loc.y);
+		gun.fire(direction.getAngle());
+		fire = false;
+	}
+	
+	gun.step(seconds);
 }
+
+void Rocket::shoot() { fire = true; }
 
 Point Rocket::getLoc() const { return loc; }
 
 double Rocket::getDir() const { return direction.getAngle(); }
 
 void Rocket::draw(SDL_Renderer* ren) {
+	gun.draw_particles(ren);
+
 	rect->x = loc.x - width / 2;
 	rect->y = loc.y - height / 2;
 	double angle = toDegrees(direction.getAngle()) + 90;
