@@ -2,6 +2,7 @@
 #define _ENEMY_H_
 
 #include "Rocket.h"
+#include "Explosion.h"
 #include "Particle.h"
 #include "RingParticleSource.h"
 #include "Vector.h"
@@ -61,6 +62,8 @@ private:
 	const int time_to_spawn = 1;
 	double time = 0;
 
+	std::list<Explosion> explosions;
+
 	virtual void generate_new_particles(int num);
 public:
 	EnemySpawn(int screenWidth, int screenHeight);
@@ -68,6 +71,7 @@ public:
 
 	virtual void initialize_particles();
 	virtual void step(double seconds);
+	virtual void draw_particles(SDL_Renderer* ren);
 };
 
 #endif

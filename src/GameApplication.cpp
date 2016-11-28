@@ -128,9 +128,11 @@ void GameApplication::drawAll() {
 ******************/
 
 Uint32 tick(Uint32 interval, void* args) {
-	Game* game = (Game*)args;
+	GameApplication* g = (GameApplication*)args;
 
-	game->update((double)interval/1000);
+	g->game.update((double)interval/1000);
+
+	g->drawAll();
 
 	return interval;
 }
@@ -142,7 +144,7 @@ void GameApplication::run() {
 	game.startGame();
 
 	//start the update timer
-	SDL_AddTimer(TICK, (SDL_TimerCallback)tick, &game);
+	SDL_AddTimer(TICK, (SDL_TimerCallback)tick, this);
 
 
 	//render/input loop
@@ -174,7 +176,7 @@ void GameApplication::run() {
 				break;
 			}
 		}
-		drawAll();
+		//drawAll();
 	}
 }
 

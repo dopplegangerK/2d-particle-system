@@ -53,12 +53,14 @@ void Star::draw(SDL_Renderer* ren) {
 	//filledCircleColor(ren, x, y, (radius + 1) * 4, LIGHTER_WHITE);
 	//filledCircleColor(ren, x, y, (radius + 1) * 2, LIGHTER_WHITE);
 
-	circleColor(ren, x, y, radius + 1, color);
-	circleColor(ren, x, y, radius, color);
-	//draw center
-	filledCircleColor(ren, x, y, radius, TRANSPARENT_WHITE);
-	filledCircleColor(ren, x, y, radius - 1, SOLID_WHITE);
+	int myX = (int)x;
+	int myY = (int)y;
 
+	circleColor(ren, myX, myY, radius + 1, color);
+	circleColor(ren, myX, myY, radius, color);
+	//draw center
+	filledCircleColor(ren, myX, myY, radius, TRANSPARENT_WHITE);
+	filledCircleColor(ren, myX, myY, radius - 1, SOLID_WHITE);
 }
 
 StarGenerator::StarGenerator(int x, int y, unsigned int w, unsigned int h, int numStars) :

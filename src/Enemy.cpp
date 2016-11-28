@@ -40,7 +40,7 @@ void Enemy::step(double seconds) {
 	PhysicsParticle::step(seconds);
 
 	//calculate new velocity
-	Vector velocity(Point{ x, y }, player->getLoc());
+	Vector velocity(Point{ (int)x, (int)y }, player->getLoc());
 	velocity = velocity.scaleTo(speed);
 
 	//TODO: do this, but use another fixture and the collision engine to figure
@@ -79,6 +79,10 @@ void Enemy::draw(SDL_Renderer* ren) {
 	SDL_RenderCopy(ren, tex, NULL, rect);
 }
 
+void Enemy::hit(int damage) {
+	hp -= damage;
+}
+
 EnemySpawn::EnemySpawn(int screenWidth, int screenHeight) :
 	RingParticleSource( screenWidth / 2, screenHeight / 2,
 		(int)sqrt(distanceSquared(Point{ screenWidth/2, screenHeight/2 }, Point{ 0, 0 })) + 50,
@@ -111,21 +115,44 @@ void EnemySpawn::step(double seconds) {
 	}
 
 	//step all enemies
-	std::list<std::shared_ptr<Enemy>>::iterator it = particles.begin();
-	while (it != particles.end()) {
-		std::shared_ptr<Enemy> enemy = *it;
-		enemy->step(seconds);
-		if (enemy->is_dead()) {
-			std::list<std::shared_ptr<Enemy>>::iterator dead = it;
-			it++;
-			particles.erase(dead);
+	{
+		std::list<std::shared_ptr<Enemy>>::iterator it = particles.begin();
+		while (it != particles.end()) {
+			std::shared_ptr<Enemy> enemy = *it;
+			enemy->step(seconds);
+			if (enemy->is_dead()) {
+				//create an explosion in the place of the dead enemy
+				explosions.push_back(Explosion(enemy->x, enemy->y));
+
+				it = particles.erase(it);
+			}
+			else {
+				it++;
+			}
 		}
-		else {
-			it++;
+	}
+
+	//now step the explosions
+	{
+		std::list<Explosion>::iterator it = explosions.begin();
+		while (it != explosions.end()) {
+			Explosion& e = *it;
+			if (e.is_over()) {
+				it = explosions.erase(it);
+			} else {
+				e.step(seconds);
+				it++;
+			}
 		}
 	}
 }
 
-void Enemy::hit(int damage) {
-	hp -= damage;
+void EnemySpawn::draw_particles(SDL_Renderer* ren) {
+	RingParticleSource::draw_particles(ren);
+
+	std::list<Explosion>::iterator it = explosions.begin();
+	while(it != explosions.end()) {
+		(*it).draw_particles(ren);
+		it++;
+	}
 }

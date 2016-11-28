@@ -37,8 +37,8 @@ b2Shape* Bullet::makeBulletShape() {
 }
 
 void Bullet::draw(SDL_Renderer* ren) {
-	rect->x = x - width / 2;
-	rect->y = y - height / 2;
+	rect->x = (int)x - width / 2;
+	rect->y = (int)y - height / 2;
 	SDL_RenderCopyEx(ren, tex, NULL, rect, toDegrees(angle) + 90, NULL, SDL_FLIP_NONE);
 }
 

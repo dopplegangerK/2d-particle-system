@@ -23,7 +23,7 @@ public:
 
 template <class P>
 void LineParticleSource<P>::generate_new_particles(int num) {
-	for (int x = 0; x < num; x++) {
+	for (int k = 0; k < num; k++) {
 		Vector v(Point{ x1, y1 }, Point{ x2, y2 });
 		double random = (rand() % (v.getLength() * 10)) / 10.0;
 		Vector dist = v.scaleTo(random);

@@ -7,6 +7,8 @@
 
 class GameApplication {
 private:
+	friend Uint32 tick(Uint32 interval, void* args);
+
 	bool success;
 
 	// window stuff

@@ -40,8 +40,8 @@ TrajectoryParticle::TrajectoryParticle(int x, int y, double angle, int speed) :
 	Particle(x, y), direction(Vector::getDir(angle).scaleTo(speed)), speed(speed) {}
 
 void TrajectoryParticle::step(double seconds) {
-	x += (int)(direction.getX() * seconds);
-	y += (int)(direction.getY() * seconds);
+	x += direction.getX() * seconds;
+	y += direction.getY() * seconds;
 }
 
 PhysicsTrajectoryParticle::PhysicsTrajectoryParticle(int x, int y, double angle, int speed, b2World* world,

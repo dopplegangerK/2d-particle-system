@@ -8,8 +8,8 @@
 
 class Particle {
 protected:
-    int x;
-    int y;
+    double x;
+    double y;
 
 public:
     Particle(int x, int y);
