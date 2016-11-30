@@ -16,6 +16,11 @@ bool FireParticle::is_dead() const {
 void FireParticle::step(double seconds) {
 	TrajectoryParticle::step(seconds);
 	time_lived += seconds;
+	fade();
+}
+
+void FireParticle::fade() {
+	color[3] = 255 * (1 - time_lived / lifespan);
 }
 
 void FireParticle::draw(SDL_Renderer* ren) {

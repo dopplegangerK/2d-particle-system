@@ -11,6 +11,8 @@ protected:
 	double lifespan;
 	double time_lived;
 	uint8_t color[4];
+
+	virtual void fade();
 public:
 	FireParticle(int x, int y, double angle, int radius, int dist, uint32_t color, double lifespan);
 	virtual ~FireParticle() {}
@@ -22,8 +24,8 @@ public:
 //specific class for fire coming off the player's ship
 class RocketFireParticle : public FireParticle {
 private:
-	static constexpr int max_dist = 5;
-	static constexpr double max_time = 0.1;
+	static constexpr int max_dist = 2;
+	static constexpr double max_time = 0.3;
 	static constexpr int max_particle_radius = 4;
 	static constexpr int min_particle_radius = 1;
 	static double spawn_angle;

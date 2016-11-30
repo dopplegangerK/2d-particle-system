@@ -11,8 +11,8 @@ b2World* Rocket::world = nullptr;
 
 Rocket::Rocket() : Rocket(Point{ 0, 0 }, 0) {}
 
-#define corner2 { (int)(-height / 2.0), (int)(-width / 2.0) }
-#define corner1 { (int)(-height / 2.0), (int)(width / 2.0) }
+#define corner2 { (int)(-height / 2.0), (int)(-width * 0.2) }
+#define corner1 { (int)(-height / 2.0), (int)(width * 0.2) }
 
 Rocket::Rocket(const Rocket& r) : loc{ r.loc.x, r.loc.y }, direction{ r.direction },
 		rect{ new SDL_Rect }, gun(r.gun) {
