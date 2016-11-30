@@ -6,8 +6,8 @@
 #include "Vector.h"
 #include <Box2D\Box2D.h>
 #include <Particles.h>
-#include <vector>
 #include <SDL.h>
+#include <vector>
 
 //type = 1
 class Enemy: public PhysicsParticle {

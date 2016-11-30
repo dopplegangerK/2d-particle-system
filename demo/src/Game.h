@@ -4,6 +4,7 @@
 #include "Rocket.h"
 #include "Enemy.h"
 #include <Box2D\Box2D.h>
+#include <mutex>
 
 enum PhysicsObjType {
 	ENEMY = 1,
@@ -27,6 +28,8 @@ private:
 	void enemyHitPlayer(Enemy* e);
 	void bulletHitEnemy(Enemy* e, Bullet* b);
 public:
+	std::mutex game_lock;
+
 	Game();
 
 	void startGame();

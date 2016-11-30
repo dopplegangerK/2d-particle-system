@@ -112,6 +112,8 @@ void GameApplication::drawEnemies() {
 }
 
 void GameApplication::drawAll() {
+	game.game_lock.lock();
+
 	SDL_RenderClear(ren);
 
 	drawBackground();
@@ -119,6 +121,8 @@ void GameApplication::drawAll() {
 	drawEnemies();
 
 	render();
+
+	game.game_lock.unlock();
 }
 
 /*****************
@@ -129,8 +133,7 @@ Uint32 tick(Uint32 interval, void* args) {
 	GameApplication* g = (GameApplication*)args;
 
 	g->game.update((double)interval/1000);
-
-	g->drawAll();
+	g->updated = true;
 
 	return interval;
 }
@@ -174,7 +177,10 @@ void GameApplication::run() {
 				break;
 			}
 		}
-		//drawAll();
+		if (updated) {
+			drawAll();
+			updated = false;
+		}
 	}
 }
 

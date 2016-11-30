@@ -43,9 +43,9 @@ void Rocket::makePhysicsAttributes() {
 	body = world->CreateBody(&bodyDef);
 	//shape (create a triangle)
 	b2Vec2 vertices[3];
-	vertices[0].Set(-height/20.0f, width / 20.0f - 0.5f);
-	vertices[1].Set(0.0f, -width / 20.0f);
-	vertices[2].Set(height/20.0f, width/20.0f - 0.5f);
+	vertices[0].Set(-height/20.0f, width / 20.0f * 0.8f);
+	vertices[1].Set(0.0f, -width / 20.0f * 0.8f);
+	vertices[2].Set(height/20.0f, width/20.0f * 0.8f);
 	b2PolygonShape* pShape = new b2PolygonShape();
 	pShape->Set(vertices, 3);
 	shape = pShape;
@@ -94,10 +94,11 @@ void Rocket::setDir(double dir) {
 void Rocket::step(double seconds) {
 	if (body == nullptr)
 		return;
+
 	loc.x = (int)(body->GetWorldCenter().x * 10);
 	loc.y = (int)(body->GetWorldCenter().y * 10);
 	body->SetLinearVelocity(b2Vec2((float32)direction.getX(), (float32)direction.getY()));
-	body->SetTransform(body->GetPosition(), (float32)direction.getAngle() + PI/2);
+	body->SetTransform(body->GetPosition(), (float32)(direction.getAngle() + PI/2));
 
 	// update bullets
 	if (fire) {

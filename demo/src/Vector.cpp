@@ -85,8 +85,8 @@ Point rotate(const Point p, double angle, const Point center) {
 	//rotate
 	angle = v.getAngle() + angle;
 	double dist = distance(rotated, { 0, 0 });
-	rotated.x = cos(angle) * dist;
-	rotated.y = sin(angle) * dist;
+	rotated.x = (int)(cos(angle) * dist);
+	rotated.y = (int)(sin(angle) * dist);
 	//put back in world coordinates
 	rotated.x += center.x;
 	rotated.y += center.y;

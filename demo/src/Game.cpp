@@ -50,6 +50,8 @@ void Game::bulletHitEnemy(Enemy* e, Bullet* b) {
 }
 
 void Game::update(double seconds) {
+	game_lock.lock();
+
 	physics_is_running = true;
 	stepPhysics(seconds);
 	physics_is_running = false;
@@ -66,6 +68,8 @@ void Game::update(double seconds) {
 
 	rocket.step(seconds);
 	enemySpawn.step(seconds);
+
+	game_lock.unlock();
 }
 
 Rocket& Game::getRocket() { return rocket; }

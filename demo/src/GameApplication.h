@@ -20,6 +20,8 @@ private:
 	//game-related variables
 	Game game;
 	StarGenerator stars;
+	//set to true after updating game state, set to false after drawing
+	bool updated = true;
 
 	//initialization methods
 	void initSDL();
