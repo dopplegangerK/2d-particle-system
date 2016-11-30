@@ -2,8 +2,7 @@
 #include <SDL2_gfxPrimitives.h>
 #include <cmath>
 
-#define RED 0xff002aff
-#define ORANGE 0xff007fff
+#define ORANGE 0xff5eabff
 #define YELLOW 0xff44ffff
 #define WHITE 0xffffffff
 
@@ -18,8 +17,7 @@ ExplosionParticle::ExplosionParticle(int x, int y, double angle, int radius, int
 
 void ExplosionParticle::fade() {
 	double amt_dead = time_lived / lifespan;
-	//if(amt_dead > 0.7)
-		//color[3] -= 255 * (1 - amt_dead * amt_dead) / 0.3;
+	color[3] = (uint8_t)(255 * (1 - amt_dead * amt_dead * amt_dead));
 
 	if (b != 0) {
 		b = (1 - amt_dead * amt_dead / 0.2) * start_color[0];
@@ -63,9 +61,6 @@ std::shared_ptr<ExplosionParticle> ExplosionParticle::createParticleAt(int x, in
 		color = ORANGE;
 		break;
 	case 1:
-		//color = WHITE;
-		color = YELLOW;
-		break;
 	case 2:
 		color = YELLOW;
 		break;

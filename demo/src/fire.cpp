@@ -20,7 +20,7 @@ void FireParticle::step(double seconds) {
 }
 
 void FireParticle::fade() {
-	color[3] = 255 * (1 - time_lived / lifespan);
+	color[3] = (uint8_t)(255 * (1 - time_lived / lifespan));
 }
 
 void FireParticle::draw(SDL_Renderer* ren) {
@@ -37,13 +37,21 @@ RocketFireParticle::RocketFireParticle(int x, int y, double angle, int radius, i
 
 void RocketFireParticle::set_angle(double angle) { spawn_angle = angle; }
 
+void RocketFireParticle::fade() {
+	FireParticle::fade();
+	double amt_dead = time_lived / lifespan;
+
+	color[0] = (uint8_t)(255 * (1 - amt_dead));
+	color[1] = color[0];
+}
+
 std::shared_ptr<RocketFireParticle> RocketFireParticle::createParticleAt(int x, int y) {
 	int rad = rand() % (max_particle_radius - min_particle_radius) + min_particle_radius;
 
 	int r = rand();
 	double lifespan = ((r % 200) / 200.0) * max_time;
 
-	int dist = rand() % (max_dist / 2) + max_dist / 2;
+	int dist = rand() % max_dist;
 
 	return std::make_shared<RocketFireParticle>(x, y, spawn_angle, rad, dist, WHITE, lifespan);
 }

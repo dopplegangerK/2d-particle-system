@@ -32,6 +32,8 @@ private:
 public:
 	RocketFireParticle(int x, int y, double angle, int radius, int dist, uint32_t color, double lifespan);
 	virtual ~RocketFireParticle() {}
+	//virtual void draw(SDL_Renderer* ren);
+	virtual void fade();
 
 	static void set_angle(double angle);
 	static std::shared_ptr<RocketFireParticle> createParticleAt(int x, int y);
