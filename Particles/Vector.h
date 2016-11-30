@@ -16,7 +16,7 @@ private:
 public:
 	Vector();
 	Vector(double x, double y);
-	Vector(Point start, Point end);
+	Vector(const Point start, const Point end);
 	int getX() const;
 	int getY() const;
 	double getLength() const;
@@ -37,8 +37,14 @@ public:
 	void flip();
 };
 
-Point moveBy(Point p, Vector dir);
+Point moveBy(const Point p, const Vector dir);
+
+Point moveOrigin(const Point p, const Point newOrigin);
 
 double toDegrees(double radians);
 
-double distanceSquared(Point a, Point b);
+double distanceSquared(const Point a, const Point b);
+
+double distance(const Point a, const Point b);
+
+Point rotate(const Point p, double angle, const Point center = { 0, 0 });

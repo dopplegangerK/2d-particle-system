@@ -9,7 +9,7 @@ Vector::Vector(double xCoord, double yCoord) {
 	length = sqrt(x * x + y * y);
 }
 
-Vector::Vector(Point start, Point end) {
+Vector::Vector(const Point start, const Point end) {
 	x = (double)(end.x - start.x);
 	y = (double)(end.y - start.y);
 	length = sqrt(x * x + y * y);
@@ -58,14 +58,37 @@ void Vector::flip() {
 	y = 0 - y;
 }
 
-Point moveBy(Point p, Vector dir) {
+Point moveBy(const Point p, const Vector dir) {
 	return Point{ p.x + dir.getX(), p.y + dir.getY() };
+}
+
+Point moveOrigin(const Point p, const Point newOrigin) {
+	return{ p.x + newOrigin.x, p.y + newOrigin.y };
 }
 
 double toDegrees(double radians) { return radians * 180 / PI; }
 
-double distanceSquared(Point a, Point b) {
+double distanceSquared(const Point a, const Point b) {
 	int xDiff = a.x - b.x;
 	int yDiff = a.y - b.y;
 	return xDiff * xDiff + yDiff * yDiff;
+}
+
+double distance(const Point a, const Point b) {
+	return sqrt(distanceSquared(a, b));
+}
+
+Point rotate(const Point p, double angle, const Point center) {
+	Vector v(center, p);
+	//get the coordinates of p relative to center
+	Point rotated{ p.x - center.x, p.y - center.y };
+	//rotate
+	angle = v.getAngle() + angle;
+	double dist = distance(rotated, { 0, 0 });
+	rotated.x = cos(angle) * dist;
+	rotated.y = sin(angle) * dist;
+	//put back in world coordinates
+	rotated.x += center.x;
+	rotated.y += center.y;
+	return rotated;
 }

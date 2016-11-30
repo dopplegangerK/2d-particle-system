@@ -73,7 +73,7 @@ void Enemy::step(double seconds) {
 	}
 	*/
 
-	//body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
+	body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
 }
 
 void Enemy::draw(SDL_Renderer* ren) {

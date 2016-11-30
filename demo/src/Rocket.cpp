@@ -11,6 +11,9 @@ b2World* Rocket::world = nullptr;
 
 Rocket::Rocket() : Rocket(Point{ 0, 0 }, 0) {}
 
+#define corner2 { (int)(-height / 2.0), (int)(-width / 2.0) }
+#define corner1 { (int)(-height / 2.0), (int)(width / 2.0) }
+
 Rocket::Rocket(const Rocket& r) : loc{ r.loc.x, r.loc.y }, direction{ r.direction },
 		rect{ new SDL_Rect }, gun(r.gun) {
 	rect->w = width;
@@ -106,8 +109,8 @@ void Rocket::step(double seconds) {
 
 	//update fire
 	double angle = direction.getAngle();
-	Point a{ (int)(loc.x - cos(angle) * height / 2.0), (int)(loc.y - sin(angle) * width / 2.0) };
-	Point b{ (int)(loc.x - cos(angle) * height / 2.0), (int)(loc.y + sin(angle) * width / 2.0) };
+	Point b = moveOrigin(rotate(corner1, angle), loc);
+	Point a = moveOrigin(rotate(corner2, angle), loc);
 	fire_source.moveTo(a, b);
 	fire_source.step(seconds);
 }
