@@ -8,24 +8,7 @@
 #define WHITE 0xffffffff
 
 ExplosionParticle::ExplosionParticle(int x, int y, double angle, int radius, int dist, uint32_t c, double lifespan) :
-		TrajectoryParticle(x, y, angle, (int)(dist / lifespan)), 
-		radius{ radius }, time_lived { 0 }, lifespan{ lifespan } {
-	uint32_t* color_ptr = (uint32_t*)&color[0];
-	*color_ptr = c;
-}
-
-bool ExplosionParticle::is_dead() const {
-	return time_lived >= lifespan;
-}
-
-void ExplosionParticle::step(double seconds) {
-	TrajectoryParticle::step(seconds);
-	time_lived += seconds;
-}
-
-void ExplosionParticle::draw(SDL_Renderer* ren) {
-	filledCircleColor(ren, (Sint16)x, (Sint16)y, radius, *(uint32_t*)&color);
-}
+		FireParticle(x, y, angle, radius, dist, c, lifespan) { }
 
 std::shared_ptr<ExplosionParticle> ExplosionParticle::createParticleAt(int x, int y) {
 	int rad = rand() % (max_particle_radius - min_particle_radius) + min_particle_radius;

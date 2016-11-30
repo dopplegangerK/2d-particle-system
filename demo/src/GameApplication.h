@@ -25,7 +25,7 @@ private:
 	void initSDL();
 	void createWindow();
 	void createRenderer();
-	template <class T> void loadClassSprite();
+	template <class T> void loadClassSprite(double scale);
 
 	//draw methods
 	void render();

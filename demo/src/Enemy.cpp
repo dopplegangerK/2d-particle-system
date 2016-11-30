@@ -11,24 +11,28 @@ int Enemy::width = 0;
 SDL_Texture* Enemy::tex = nullptr;
 
 Enemy::Enemy(int x, int y) :
-	PhysicsParticle(x, y, enemy_world, makeEnemyBody(x, y), makeEnemyShape(), 1, 0, 0, 1, true),
+	PhysicsParticle(x, y, enemy_world, makeEnemyBody(x, y), makeEnemyShape(), 1, 1),
 	direction{ 0, 0 } {
 	speed = rand() % (max_speed - min_speed) + min_speed;
 	rect = new SDL_Rect;
 	rect->w = width;
 	rect->h = height;
+
+	Vector velocity(Point{ (int)x, (int)y }, player->getLoc());
+	velocity = velocity.scaleTo(speed);
+	body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
 }
 
 b2Body* Enemy::makeEnemyBody(int x, int y) {
 	b2BodyDef bodyDef;
-	bodyDef.position.Set((float32)x/10, (float32)y/10);
+	bodyDef.position.Set(x/10.0f, y/10.0f);
 	bodyDef.type = b2_dynamicBody;
 	return enemy_world->CreateBody(&bodyDef);
 }
 
 b2Shape* Enemy::makeEnemyShape() {
 	b2CircleShape* circle = new b2CircleShape();
-	circle->m_radius = (float32)(width / 20);
+	circle->m_radius = (float32)(width / 20.0);
 	return circle;
 }
 
@@ -69,7 +73,7 @@ void Enemy::step(double seconds) {
 	}
 	*/
 
-	body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
+	//body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
 }
 
 void Enemy::draw(SDL_Renderer* ren) {

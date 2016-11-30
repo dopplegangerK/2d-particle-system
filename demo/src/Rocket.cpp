@@ -40,16 +40,16 @@ void Rocket::makePhysicsAttributes() {
 	body = world->CreateBody(&bodyDef);
 	//shape (create a triangle)
 	b2Vec2 vertices[3];
-	vertices[0].Set((float32)height/10, (float32)width / 20);
-	vertices[1].Set(0, (float32)width/10);
-	vertices[2].Set(0, 0);
+	vertices[0].Set(-height/20.0f, -width / 20.0f);
+	vertices[1].Set(width/20.0f, 0.0f);
+	vertices[2].Set(height/20.0f, -width/20.0f);
 	b2PolygonShape* pShape = new b2PolygonShape();
 	pShape->Set(vertices, 3);
 	shape = pShape;
 	//create fixture
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = shape;
-	fixtureDef.density = 0;
+	fixtureDef.density = 1;
 	fixtureDef.friction = 0;
 	fixtureDef.restitution = 1;
 	fixtureDef.userData = new PhysicsData{ 2, this };
@@ -96,13 +96,20 @@ void Rocket::step(double seconds) {
 	body->SetLinearVelocity(b2Vec2((float32)direction.getX(), (float32)direction.getY()));
 	body->SetTransform(body->GetPosition(), (float32)direction.getAngle());
 
+	// update bullets
 	if (fire) {
 		gun.moveTo(loc.x, loc.y);
 		gun.fire(direction.getAngle());
 		fire = false;
 	}
-	
 	gun.step(seconds);
+
+	//update fire
+	double angle = direction.getAngle();
+	Point a{ (int)(loc.x - cos(angle) * height / 2.0), (int)(loc.y - sin(angle) * width / 2.0) };
+	Point b{ (int)(loc.x - cos(angle) * height / 2.0), (int)(loc.y + sin(angle) * width / 2.0) };
+	fire_source.moveTo(a, b);
+	fire_source.step(seconds);
 }
 
 void Rocket::shoot() { fire = true; }
@@ -112,6 +119,7 @@ Point Rocket::getLoc() const { return loc; }
 double Rocket::getDir() const { return direction.getAngle(); }
 
 void Rocket::draw(SDL_Renderer* ren) {
+	fire_source.draw_particles(ren);
 	gun.draw_particles(ren);
 
 	rect->x = loc.x - width / 2;

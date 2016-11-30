@@ -1,9 +1,7 @@
 #ifndef _BULLET_H_
 #define _BULLET_H_
 
-#include "Particle.h"
-#include "ParticleSource.h"
-#include "PointParticleSource.h"
+#include <Particles.h>
 #include <iostream>
 
 // type = 3

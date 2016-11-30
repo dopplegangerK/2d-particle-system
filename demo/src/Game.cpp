@@ -39,7 +39,7 @@ void Game::stepPhysics(double seconds) {
 }
 
 void Game::enemyHitPlayer(Enemy* e) {
-	std::cout << "I've been hit\n";
+	//std::cout << "I've been hit\n";
 	life--;
 	e->hit(3);
 }

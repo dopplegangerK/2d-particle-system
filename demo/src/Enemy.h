@@ -3,10 +3,9 @@
 
 #include "Rocket.h"
 #include "Explosion.h"
-#include "Particle.h"
-#include "RingParticleSource.h"
 #include "Vector.h"
-#include "Box2D\Box2D.h"
+#include <Box2D\Box2D.h>
+#include <Particles.h>
 #include <vector>
 #include <SDL.h>
 

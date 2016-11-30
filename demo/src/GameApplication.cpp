@@ -68,12 +68,12 @@ SDL_Texture* loadTexture(const char* file, SDL_Renderer *ren) {
 }
 
 template <class T>
-void GameApplication::loadClassSprite() {
+void GameApplication::loadClassSprite(double scale) {
 	T::tex = loadTexture(T::sprite, ren);
 	int w, h;
 	SDL_QueryTexture(T::tex, NULL, NULL, &w, &h);
-	T::width = w/2;
-	T::height = h/2;
+	T::width = (int)(w * scale);
+	T::height = (int)(h * scale);
 }
 
 GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, screenHeight, 100)  {
@@ -81,11 +81,9 @@ GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, s
 	initSDL();
 	createWindow();
 	createRenderer();
-	loadClassSprite<Rocket>();
-	loadClassSprite<Enemy>();
-	loadClassSprite<Bullet>();
-	Bullet::width *= 2;
-	Bullet::height *= 2;
+	loadClassSprite<Rocket>(0.5);
+	loadClassSprite<Enemy>(0.5);
+	loadClassSprite<Bullet>(1);
 }
 
 /***************

@@ -3,6 +3,7 @@
 
 #include "Vector.h"
 #include "Bullet.h"
+#include "Fire.h"
 #include <SDL.h>
 #include <Box2D\Box2D.h>
 
@@ -14,6 +15,8 @@ private:
 	Vector direction;
 
 	bool fire = false;
+
+	RocketFireSource fire_source;
 
 	SDL_Rect* rect;
 
