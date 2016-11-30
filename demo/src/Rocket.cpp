@@ -43,9 +43,9 @@ void Rocket::makePhysicsAttributes() {
 	body = world->CreateBody(&bodyDef);
 	//shape (create a triangle)
 	b2Vec2 vertices[3];
-	vertices[0].Set(-height/20.0f, -width / 20.0f);
-	vertices[1].Set(width/20.0f, 0.0f);
-	vertices[2].Set(height/20.0f, -width/20.0f);
+	vertices[0].Set(-height/20.0f, width / 20.0f - 0.5f);
+	vertices[1].Set(0.0f, -width / 20.0f);
+	vertices[2].Set(height/20.0f, width/20.0f - 0.5f);
 	b2PolygonShape* pShape = new b2PolygonShape();
 	pShape->Set(vertices, 3);
 	shape = pShape;
@@ -97,7 +97,7 @@ void Rocket::step(double seconds) {
 	loc.x = (int)(body->GetWorldCenter().x * 10);
 	loc.y = (int)(body->GetWorldCenter().y * 10);
 	body->SetLinearVelocity(b2Vec2((float32)direction.getX(), (float32)direction.getY()));
-	body->SetTransform(body->GetPosition(), (float32)direction.getAngle());
+	body->SetTransform(body->GetPosition(), (float32)direction.getAngle() + PI/2);
 
 	// update bullets
 	if (fire) {
@@ -129,6 +129,16 @@ void Rocket::draw(SDL_Renderer* ren) {
 	rect->y = loc.y - height / 2;
 	double angle = toDegrees(direction.getAngle()) + 90;
 	SDL_RenderCopyEx(ren, tex, NULL, rect, angle, NULL, SDL_FLIP_NONE);
+
+	//draw collision shape's vertices, for debugging purposes
+	/*
+	b2Transform t = body->GetTransform();
+	for (int k = 0; k < 3; k++) {
+		b2Vec2 vertex = ((b2PolygonShape*)shape)->GetVertex(k);
+		Point p = rotate({ (int)(vertex.x * 10), (int)(vertex.y * 10) }, t.q.GetAngle());
+		filledCircleColor(ren, p.x + loc.x, p.y + loc.y, 5, 0xff0000ff);
+	}
+	*/
 }
 
 void Rocket::setPhysicsWorld(b2World* w) { world = w; }

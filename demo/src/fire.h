@@ -24,6 +24,11 @@ public:
 //specific class for fire coming off the player's ship
 class RocketFireParticle : public FireParticle {
 private:
+	double r;
+	double g;
+	double b;
+	uint8_t start_color[4];
+
 	static constexpr int max_dist = 2;
 	static constexpr double max_time = 0.3;
 	static constexpr int max_particle_radius = 4;
