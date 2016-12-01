@@ -41,7 +41,7 @@ void RocketFireParticle::fade() {
 	FireParticle::fade();
 	double amt_dead = time_lived / lifespan;
 
-	color[0] = (uint8_t)(255 * (1 - amt_dead));
+	color[0] = (uint8_t)(255 * (1 - amt_dead) * (1 - amt_dead));
 	color[1] = color[0];
 }
 

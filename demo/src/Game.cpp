@@ -81,3 +81,15 @@ EnemySpawn& Game::getEnemySpawn() { return enemySpawn; }
 void Game::endGame() {
 	std::cout << "End of game\n";
 }
+
+template <class T>
+void Game::cleanup_class() {
+	if (T::tex != nullptr)
+		SDL_DestroyTexture(T::tex);
+}
+
+void Game::cleanup() {
+	cleanup_class<Enemy>();
+	cleanup_class<Rocket>();
+	cleanup_class<Bullet>();
+}

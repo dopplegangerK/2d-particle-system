@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include <Box2D\Box2D.h>
 #include <mutex>
+#include <SDL_mixer.h>
 
 enum PhysicsObjType {
 	ENEMY = 1,
@@ -42,6 +43,10 @@ public:
 	void turnRocket(double newDir);
 
 	EnemySpawn& getEnemySpawn();
+
+	//make all members delete their textures, etc
+	template <class T> void cleanup_class();
+	void cleanup();
 };
 
 #endif
