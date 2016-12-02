@@ -19,7 +19,7 @@ public:
     ParticleSource(int density, bool dynamic = true, bool constant = false);
 	virtual ~ParticleSource() {}
 	// Set the position and state of all particles.
-	// This must be called before using the particle source.
+	// This must be called by the user's code before using the particle source.
 	virtual void initialize_particles();
     virtual void step(double seconds);
     virtual void draw_particles(SDL_Renderer* ren);

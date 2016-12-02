@@ -11,6 +11,7 @@ protected:
 	double lifespan;
 	double time_lived;
 	uint8_t color[4];
+	int alpha;
 
 	virtual void fade();
 public:
@@ -30,7 +31,7 @@ private:
 	uint8_t start_color[4];
 
 	static constexpr int max_dist = 2;
-	static constexpr double max_time = 0.3;
+	static constexpr double max_time = 0.15;
 	static constexpr int max_particle_radius = 4;
 	static constexpr int min_particle_radius = 1;
 	static double spawn_angle;

@@ -102,6 +102,14 @@ void GameApplication::createRenderer() {
 	}
 }
 
+SDL_Texture* GameApplication::loadSprite(const char* path, SDL_Rect* rect) {
+	rect->x = 0;
+	rect->y = 0;
+	SDL_Texture* tex = loadTexture(path, ren);
+	SDL_QueryTexture(tex, NULL, NULL, &rect->w, &rect->h);
+	return tex;
+}
+
 template <class T>
 void GameApplication::loadClassSprite(double scale) {
 	T::tex = loadTexture(T::sprite, ren);
@@ -114,21 +122,24 @@ void GameApplication::loadClassSprite(double scale) {
 void GameApplication::loadFont() {
 	big_font = openFont(font_path, 72);
 	med_font = openFont(font_path, 32);
+	small_font = openFont(font_path, 20);
 }
 
-void GameApplication::loadText() {
-	pause1_text = renderText("PAUSED", big_font, WHITE_SDL_COLOR, ren);
-	pause1_rect.x = 0;
-	pause1_rect.y = 0;
-	SDL_QueryTexture(pause1_text, NULL, NULL, &pause1_rect.w, &pause1_rect.h);
+SDL_Texture* GameApplication::loadText(const char* text, TTF_Font* font, SDL_Color color, SDL_Rect* src) {
+	SDL_Texture* tex = renderText(text, font, color, ren);
+	src->x = 0;
+	src->y = 0;
+	SDL_QueryTexture(tex, NULL, NULL, &src->w, &src->h);
+	return tex;
+}
+
+void GameApplication::loadAllText() {
+	pause1_text = loadText("PAUSED", big_font, WHITE_SDL_COLOR, &pause1_rect);
 	pause1_dest = pause1_rect;
 	pause1_dest.x = screenWidth / 2 - pause1_rect.w / 2;
 	pause1_dest.y = screenHeight / 2 - pause1_rect.h / 2;
 
-	pause2_text = renderText("ESC to resume", med_font, WHITE_SDL_COLOR, ren);
-	pause2_rect.x = 0;
-	pause2_rect.y = 0;
-	SDL_QueryTexture(pause2_text, NULL, NULL, &pause2_rect.w, &pause2_rect.h);
+	pause2_text = loadText("ESC to resume", med_font, WHITE_SDL_COLOR, &pause2_rect);
 	pause2_dest = pause2_rect;
 	pause2_dest.x = screenWidth / 2 - pause2_rect.w / 2;
 	pause2_dest.y = screenHeight / 2 - pause2_rect.h / 2 + 50;
@@ -139,11 +150,14 @@ GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, s
 	initSDL();
 	createWindow();
 	createRenderer();
+
 	loadClassSprite<Rocket>(0.5);
 	loadClassSprite<Enemy>(0.5);
 	loadClassSprite<Bullet>(1);
+	life_tex = loadSprite(life_tex_path, &life_rect);
+
 	loadFont();
-	loadText();
+	loadAllText();
 }
 
 /***************
@@ -170,6 +184,32 @@ void GameApplication::drawEnemies() {
 	game.getEnemySpawn().draw_particles(ren);
 }
 
+void GameApplication::drawScore() {
+	if (game.scoreChanged() || score_text == nullptr) {
+		std::string score_str = "Score: ";
+		score_str += std::to_string(game.getScore());
+		score_text = loadText(score_str.c_str(), med_font, WHITE_SDL_COLOR, &score_rect);
+		score_dest = score_rect;
+		score_dest.y = screenHeight - score_rect.h - 15;
+		score_dest.x = screenWidth - score_rect.w - 20;
+	}
+
+	SDL_RenderCopy(ren, score_text, &score_rect, &score_dest);
+}
+
+void GameApplication::drawLives() {
+	SDL_Rect dest;
+	dest.w = life_rect.w;
+	dest.h = life_rect.h;
+	dest.y = screenHeight - dest.h - 20;
+	int k = 0;
+	while (k < game.getLives()) {
+		dest.x = k * dest.w + (k + 1) * 15;
+		SDL_RenderCopy(ren, life_tex, &life_rect, &dest);
+		k++;
+	}
+}
+
 void GameApplication::drawPauseScreen() {
 	boxColor(ren, 0, 0, screenWidth, screenHeight, PAUSE_COLOR);
 	SDL_RenderCopy(ren, pause1_text, &pause1_rect, &pause1_dest);
@@ -184,6 +224,8 @@ void GameApplication::drawAll() {
 	drawBackground();
 	drawRocket();
 	drawEnemies();
+	drawScore();
+	drawLives();
 
 	game.game_lock.unlock();
 

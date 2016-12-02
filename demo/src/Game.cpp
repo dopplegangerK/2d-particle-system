@@ -39,7 +39,6 @@ void Game::stepPhysics(double seconds) {
 }
 
 void Game::enemyHitPlayer(Enemy* e) {
-	//std::cout << "I've been hit\n";
 	life--;
 	e->hit(3);
 }
@@ -47,27 +46,30 @@ void Game::enemyHitPlayer(Enemy* e) {
 void Game::bulletHitEnemy(Enemy* e, Bullet* b) {
 	b->hit();
 	e->hit(3);
+	score++;
+	score_change = true;
 }
 
 void Game::update(double seconds) {
 	game_lock.lock();
 
-	physics_is_running = true;
-	stepPhysics(seconds);
-	physics_is_running = false;
+	if (life == 0) {
+		endGame();
+		game_lock.unlock();
+		return;
+	}
 
 	while(bullets > 0) {
 		rocket.shoot();
 		bullets--;
 	}
 
-	if (life == 0) {
-		endGame();
-		return;
-	}
-
 	rocket.step(seconds);
 	enemySpawn.step(seconds);
+
+	physics_is_running = true;
+	stepPhysics(seconds);
+	physics_is_running = false;
 
 	game_lock.unlock();
 }
@@ -77,6 +79,17 @@ Rocket& Game::getRocket() { return rocket; }
 void Game::turnRocket(double newDir) { rocket.setDir(newDir); }
 
 EnemySpawn& Game::getEnemySpawn() { return enemySpawn; }
+
+bool Game::scoreChanged() { return score_change; }
+
+int Game::getScore() {
+	score_change = false;
+	return score;
+}
+
+int Game::getLives() { return life; }
+
+int Game::maxLives() { return max_lives; }
 
 void Game::endGame() {
 	std::cout << "End of game\n";

@@ -30,13 +30,8 @@ void ExplosionParticle::fade() {
 			g = 0;
 	}
 	if (amt_dead > 0.8) {
-		//r = (1.8 - amt_dead) * start_color[0];
 		if (r < 0)
 			r = 0;
-		//if (r < b) {
-			//r = b;
-			//b = 0;
-		//}
 	}
 	color[0] = (int)r;
 	color[1] = (int)g;

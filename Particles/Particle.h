@@ -15,15 +15,15 @@ public:
     Particle(int x, int y);
 	virtual ~Particle() {}
 
-	// NOTE: every implaementable subclass of Particle should implement its own version of this method.
-	// This one just returns a default unique_ptr
+	// NOTE: every implementable subclass of Particle should implement its own version of this method.
+	// This one just returns a default shared_ptr
 	static std::shared_ptr<Particle> createParticleAt(int x, int y);
 
     //draw the particle
     virtual void draw(SDL_Renderer* ren) = 0;
-    //setp the particle forward in time
-    //override unless the particle is stationary
+    //step the particle forward in time (does nothing by default)
     virtual void step(double seconds);
+	//return true when the particle should die
 	virtual bool is_dead() const = 0;
 };
 

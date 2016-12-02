@@ -19,7 +19,10 @@ private:
 	EnemySpawn enemySpawn;
 	b2World* world;
 
-	int life = 300;
+	static constexpr int max_lives = 5;
+	int life = max_lives;
+	int score = 0;
+	bool score_change = false;
 
 	bool physics_is_running = false;
 	int bullets = 0;
@@ -43,6 +46,12 @@ public:
 	void turnRocket(double newDir);
 
 	EnemySpawn& getEnemySpawn();
+
+	bool scoreChanged();
+	int getScore();
+
+	int maxLives();
+	int getLives();
 
 	//make all members delete their textures, etc
 	template <class T> void cleanup_class();
