@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "Bullet.h"
 #include "Fire.h"
+#include "Explosion.h"
 #include <SDL.h>
 #include <Box2D\Box2D.h>
 
@@ -27,6 +28,9 @@ private:
 
 	BulletSource gun;
 
+	bool dead = false;
+	Explosion* explosion = nullptr;
+
 	void makePhysicsAttributes();
 public:
 	//drawing stuff
@@ -46,6 +50,7 @@ public:
 	Point getLoc() const;
 	double getDir() const;
 	void draw(SDL_Renderer* ren);
+	void explode();
 
 	static void setPhysicsWorld(b2World* world);
 };

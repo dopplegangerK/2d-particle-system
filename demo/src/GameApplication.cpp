@@ -143,6 +143,11 @@ void GameApplication::loadAllText() {
 	pause2_dest = pause2_rect;
 	pause2_dest.x = screenWidth / 2 - pause2_rect.w / 2;
 	pause2_dest.y = screenHeight / 2 - pause2_rect.h / 2 + 50;
+
+	end_text = loadText("GAME OVER", big_font, WHITE_SDL_COLOR, &end_rect);
+	end_dest = end_rect;
+	end_dest.x = screenWidth / 2 - end_rect.w / 2;
+	end_dest.y = screenHeight / 2 - end_rect.h / 2;
 }
 
 GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, screenHeight, 100)  {
@@ -216,6 +221,10 @@ void GameApplication::drawPauseScreen() {
 	SDL_RenderCopy(ren, pause2_text, &pause2_rect, &pause2_dest);
 }
 
+void GameApplication::drawEndScreen() {
+	SDL_RenderCopy(ren, end_text, &end_rect, &end_dest);
+}
+
 void GameApplication::drawAll() {
 	game.game_lock.lock();
 
@@ -231,6 +240,9 @@ void GameApplication::drawAll() {
 
 	if (paused)
 		drawPauseScreen();
+
+	if (game.getState() == GameState::END)
+		drawEndScreen();
 
 	render();
 }

@@ -13,13 +13,20 @@ enum PhysicsObjType {
 	BULLET = 3
 };
 
+enum GameState {
+	PLAY,
+	END
+};
+
 class Game {
 private:
+	GameState state = PLAY;
+
 	Rocket rocket;
 	EnemySpawn enemySpawn;
 	b2World* world;
 
-	static constexpr int max_lives = 5;
+	static constexpr int max_lives = 3;
 	int life = max_lives;
 	int score = 0;
 	bool score_change = false;
@@ -40,7 +47,9 @@ public:
 
 	void update(double seconds);
 
-	void endGame();
+	void endGame(double seconds);
+
+	GameState getState() { return state; }
 
 	Rocket& getRocket();
 	void turnRocket(double newDir);

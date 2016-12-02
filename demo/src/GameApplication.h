@@ -36,6 +36,10 @@ private:
 	SDL_Rect score_rect;
 	SDL_Rect score_dest;
 
+	SDL_Texture* end_text = nullptr;
+	SDL_Rect end_rect;
+	SDL_Rect end_dest;
+
 	//any textures
 	static constexpr char* life_tex_path = "../../demo/sprites/playerLife3_blue.png";
 	SDL_Texture* life_tex;
@@ -68,6 +72,7 @@ private:
 	void drawScore();
 	void drawLives();
 	void drawPauseScreen();
+	void drawEndScreen();
 	void drawAll();
 
 	void cleanup();

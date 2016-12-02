@@ -54,7 +54,8 @@ void Game::update(double seconds) {
 	game_lock.lock();
 
 	if (life == 0) {
-		endGame();
+		state = END;
+		endGame(seconds);
 		game_lock.unlock();
 		return;
 	}
@@ -76,7 +77,10 @@ void Game::update(double seconds) {
 
 Rocket& Game::getRocket() { return rocket; }
 
-void Game::turnRocket(double newDir) { rocket.setDir(newDir); }
+void Game::turnRocket(double newDir) {
+	if(life > 0)
+		rocket.setDir(newDir);
+}
 
 EnemySpawn& Game::getEnemySpawn() { return enemySpawn; }
 
@@ -91,7 +95,9 @@ int Game::getLives() { return life; }
 
 int Game::maxLives() { return max_lives; }
 
-void Game::endGame() {
+void Game::endGame(double seconds) {
+	rocket.explode();
+	rocket.step(seconds);
 	std::cout << "End of game\n";
 }
 

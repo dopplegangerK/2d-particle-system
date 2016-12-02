@@ -77,6 +77,7 @@ Rocket& Rocket::operator= (const Rocket& r) {
 	loc = r.loc;
 	direction = r.direction;
 	gun = r.gun;
+	explosion = r.explosion;
 	if (rect == nullptr && r.rect != nullptr) {
 		rect = new SDL_Rect;
 	}
@@ -92,6 +93,11 @@ void Rocket::setDir(double dir) {
 }
 
 void Rocket::step(double seconds) {
+	if (dead) {
+		explosion->step(seconds);
+		return;
+	}
+
 	if (body == nullptr)
 		return;
 
@@ -118,11 +124,23 @@ void Rocket::step(double seconds) {
 
 void Rocket::shoot() { fire = true; }
 
+void Rocket::explode() {
+	if (!dead) {
+		explosion = new Explosion(loc.x, loc.y);
+		dead = true;
+	}
+}
+
 Point Rocket::getLoc() const { return loc; }
 
 double Rocket::getDir() const { return direction.getAngle(); }
 
 void Rocket::draw(SDL_Renderer* ren) {
+	if (dead) {
+		explosion->draw_particles(ren);
+		return;
+	}
+
 	fire_source.draw_particles(ren);
 	gun.draw_particles(ren);
 
