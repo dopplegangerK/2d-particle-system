@@ -137,16 +137,20 @@ void EnemySpawn::step(double seconds) {
 	}
 
 	//now step the explosions
-	{
-		std::list<Explosion>::iterator it = explosions.begin();
-		while (it != explosions.end()) {
-			Explosion& e = *it;
-			if (e.is_over()) {
-				it = explosions.erase(it);
-			} else {
-				e.step(seconds);
-				it++;
-			}
+	step_explosions(seconds);
+}
+
+
+void EnemySpawn::step_explosions(double seconds) {
+	std::list<Explosion>::iterator it = explosions.begin();
+	while (it != explosions.end()) {
+		Explosion& e = *it;
+		if (e.is_over()) {
+			it = explosions.erase(it);
+		}
+		else {
+			e.step(seconds);
+			it++;
 		}
 	}
 }

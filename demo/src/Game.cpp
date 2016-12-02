@@ -55,6 +55,7 @@ void Game::update(double seconds) {
 
 	if (life == 0) {
 		state = END;
+		enemySpawn.step(seconds);
 		endGame(seconds);
 		game_lock.unlock();
 		return;
@@ -98,7 +99,8 @@ int Game::maxLives() { return max_lives; }
 void Game::endGame(double seconds) {
 	rocket.explode();
 	rocket.step(seconds);
-	std::cout << "End of game\n";
+	enemySpawn.step_explosions(seconds);
+	//std::cout << "End of game\n";
 }
 
 template <class T>

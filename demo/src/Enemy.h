@@ -70,6 +70,7 @@ public:
 
 	virtual void initialize_particles();
 	virtual void step(double seconds);
+	virtual void step_explosions(double seconds);
 	virtual void draw_particles(SDL_Renderer* ren);
 };
 
