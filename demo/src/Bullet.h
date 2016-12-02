@@ -27,7 +27,7 @@ public:
 	static std::shared_ptr<Bullet> createParticleAt(int x, int y);
 
 	Bullet(int x, int y, double dir);
-	virtual ~Bullet() { std::cout << "Killing bullet\n"; }
+	virtual ~Bullet() {}
 	virtual void draw(SDL_Renderer* ren);
 	virtual bool is_dead() const;
 	virtual void hit();

@@ -24,7 +24,27 @@ void FireParticle::fade() {
 }
 
 void FireParticle::draw(SDL_Renderer* ren) {
+	//filledCircleColor(ren, (Sint16)x, (Sint16)y, radius, *(uint32_t*)&color);
+	
+	//rachet halo particles
+	/*
+	uint8_t alpha = color[3];
+	color[3] = alpha / 4;
+	filledCircleColor(ren, (Sint16)x, (Sint16)y, (int)(radius * 1.2), *(uint32_t*)&color);
+	filledCircleColor(ren, (Sint16)x, (Sint16)y, (int)(radius), *(uint32_t*)&color);
+	color[3] = alpha;
+	filledCircleColor(ren, (Sint16)x, (Sint16)y, radius * 0.5, *(uint32_t*)&color);
+	*/
+
+	//racheter halo particles
+	
+	uint8_t alpha = color[3];
+	color[3] = alpha / 4;
+	filledCircleColor(ren, (Sint16)x, (Sint16)y, (int)(radius + 2), *(uint32_t*)&color);
+	color[3] = alpha;
 	filledCircleColor(ren, (Sint16)x, (Sint16)y, radius, *(uint32_t*)&color);
+	
+	
 }
 
 /* ROCKET FIRE PARTICLE */
