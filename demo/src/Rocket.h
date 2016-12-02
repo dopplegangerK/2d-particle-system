@@ -28,6 +28,9 @@ private:
 
 	BulletSource gun;
 
+	static constexpr double hit_blink_time = 1;
+	double my_hit_time = -1;
+
 	bool dead = false;
 	Explosion* explosion = nullptr;
 
@@ -50,6 +53,7 @@ public:
 	Point getLoc() const;
 	double getDir() const;
 	void draw(SDL_Renderer* ren);
+	void hit();
 	void explode();
 
 	static void setPhysicsWorld(b2World* world);

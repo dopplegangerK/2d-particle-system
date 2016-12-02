@@ -40,6 +40,7 @@ void Game::stepPhysics(double seconds) {
 
 void Game::enemyHitPlayer(Enemy* e) {
 	life--;
+	rocket.hit();
 	e->hit(3);
 }
 

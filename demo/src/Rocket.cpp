@@ -98,6 +98,12 @@ void Rocket::step(double seconds) {
 		return;
 	}
 
+	if (my_hit_time >= 0) {
+		my_hit_time += seconds;
+		if (my_hit_time >= hit_blink_time)
+			my_hit_time = -1;
+	}
+
 	if (body == nullptr)
 		return;
 
@@ -124,6 +130,10 @@ void Rocket::step(double seconds) {
 
 void Rocket::shoot() { fire = true; }
 
+void Rocket::hit() {
+	my_hit_time = 0;
+}
+
 void Rocket::explode() {
 	if (!dead) {
 		explosion = new Explosion(loc.x, loc.y);
@@ -141,13 +151,16 @@ void Rocket::draw(SDL_Renderer* ren) {
 		return;
 	}
 
-	fire_source.draw_particles(ren);
 	gun.draw_particles(ren);
 
-	rect->x = loc.x - width / 2;
-	rect->y = loc.y - height / 2;
-	double angle = toDegrees(direction.getAngle()) + 90;
-	SDL_RenderCopyEx(ren, tex, NULL, rect, angle, NULL, SDL_FLIP_NONE);
+	if (my_hit_time < 0 || (int)(my_hit_time*8) % 2 == 0) {
+		fire_source.draw_particles(ren);
+
+		rect->x = loc.x - width / 2;
+		rect->y = loc.y - height / 2;
+		double angle = toDegrees(direction.getAngle()) + 90;
+		SDL_RenderCopyEx(ren, tex, NULL, rect, angle, NULL, SDL_FLIP_NONE);
+	}
 
 	//draw collision shape's vertices, for debugging purposes
 	/*
