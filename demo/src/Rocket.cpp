@@ -62,10 +62,9 @@ void Rocket::makePhysicsAttributes() {
 	fixtureDef.restitution = 1;
 	fixtureDef.userData = new PhysicsData{ 2, this };
 	fixture = body->CreateFixture(&fixtureDef);
-	//filter out collisions with bullets
+	//Set our collision category
 	b2Filter filter;
 	filter.categoryBits = 0x0002;
-	filter.maskBits = ~0x0004;
 	fixture->SetFilterData(filter);
 }
 

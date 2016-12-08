@@ -92,3 +92,8 @@ Point rotate(const Point p, double angle, const Point center) {
 	rotated.y += center.y;
 	return rotated;
 }
+
+Point getPointOnRing(Point center, int radius) {
+	double angle = 2 * PI * ((rand() % 200) / 200.0);
+	return Point{ (int)(center.x + cos(angle) * radius), (int)(center.y + sin(angle) * radius) };
+}

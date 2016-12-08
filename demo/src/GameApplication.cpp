@@ -164,8 +164,10 @@ GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, s
 	createRenderer();
 
 	loadClassSprite<Rocket>(0.5);
-	loadClassSprite<Enemy>(0.5);
-	loadClassSprite<Bullet>(1);
+	loadClassSprite<GreenEnemy>(0.5);
+	loadClassSprite<RedEnemy>(0.5);
+	loadClassSprite<PlayerBullet>(1);
+	loadClassSprite<EnemyBullet>(1);
 	life_tex = loadSprite(life_tex_path, &life_rect);
 
 	loadFont();
@@ -204,7 +206,7 @@ void GameApplication::drawScore() {
 	if (game.scoreChanged() || score_text.tex == nullptr) {
 		std::string score_str = "Score: ";
 		score_str += std::to_string(game.getScore());
-		score_text = loadText(score_str.c_str(), med_font, WHITE_SDL_COLOR, { screenWidth - 185, screenHeight - 45, }, false);
+		score_text = loadText(score_str.c_str(), med_font, WHITE_SDL_COLOR, { screenWidth - 210, screenHeight - 45, }, false);
 	}
 	drawText(score_text);
 }
@@ -233,6 +235,7 @@ void GameApplication::drawPauseScreen() {
 }
 
 void GameApplication::drawEndScreen() {
+	boxColor(ren, 0, 0, screenWidth, screenHeight, PAUSE_COLOR);
 	drawText(end1_text);
 	drawText(end2_text);
 	drawText(end3_text);

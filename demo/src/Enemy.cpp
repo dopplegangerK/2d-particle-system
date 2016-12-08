@@ -3,24 +3,22 @@
 #include <SDL2_gfxPrimitives.h>
 
 Rocket* Enemy::player = nullptr;
-//std::vector<std::shared_ptr<Enemy>> Enemy::all_enemies = std::vector<std::shared_ptr<Enemy>>();
 b2World* Enemy::enemy_world = nullptr;
 
-int Enemy::height = 0;
-int Enemy::width = 0;
-SDL_Texture* Enemy::tex = nullptr;
-
-Enemy::Enemy(int x, int y) :
-	PhysicsParticle(x, y, enemy_world, makeEnemyBody(x, y), makeEnemyShape(), 1, 1),
-	direction{ 0, 0 } {
+Enemy::Enemy(int x, int y, int w, int h, SDL_Texture* tex, int hp) :
+		PhysicsParticle(x, y, enemy_world, makeEnemyBody(x, y), makeEnemyShape(w/2), 1, 1),
+		direction{ 0, 0 }, myTex{ tex }, hp { hp } {
 	speed = rand() % (max_speed - min_speed) + min_speed;
-	rect = new SDL_Rect;
-	rect->w = width;
-	rect->h = height;
+	rect.w = w;
+	rect.h = h;
 
 	Vector velocity(Point{ (int)x, (int)y }, player->getLoc());
 	velocity = velocity.scaleTo(speed);
 	body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
+
+	b2Filter filter;
+	filter.categoryBits = 0x0008;
+	fixture->SetFilterData(filter);
 }
 
 b2Body* Enemy::makeEnemyBody(int x, int y) {
@@ -30,17 +28,43 @@ b2Body* Enemy::makeEnemyBody(int x, int y) {
 	return enemy_world->CreateBody(&bodyDef);
 }
 
-b2Shape* Enemy::makeEnemyShape() {
+b2Shape* Enemy::makeEnemyShape(int r) {
 	b2CircleShape* circle = new b2CircleShape();
-	circle->m_radius = (float32)(width / 20.0);
+	circle->m_radius = (float32)(r / 20.0);
 	return circle;
 }
 
-Enemy::~Enemy() {
-	delete rect;
+void Enemy::draw(SDL_Renderer* ren) {
+	//filledCircleColor(ren, x, y, enemy_width/2, 0xff0000ff);
+	rect.x = (int)x - rect.w / 2;
+	rect.y = (int)y - rect.h / 2;
+	SDL_RenderCopy(ren, myTex, NULL, &rect);
 }
 
-void Enemy::step(double seconds) {
+void Enemy::hit(int damage) {
+	hp -= damage;
+	Explosion::play_sound();
+}
+
+std::shared_ptr<Enemy> Enemy::createParticleAt(int x, int y) {
+	int color_choice = rand() % 4;
+	if (color_choice < 3)
+		return std::make_shared<GreenEnemy>(x, y);
+	else
+		return std::make_shared<RedEnemy>(x, y);
+}
+
+/***************
+ * Green Enemy *
+ ***************/
+
+int GreenEnemy::height = 0;
+int GreenEnemy::width = 0;
+SDL_Texture* GreenEnemy::tex = nullptr;
+
+GreenEnemy::GreenEnemy(int x, int y) : Enemy(x, y, width, height, tex, 1) {}
+
+void GreenEnemy::step(double seconds) {
 	PhysicsParticle::step(seconds);
 
 	//calculate new velocity
@@ -54,57 +78,88 @@ void Enemy::step(double seconds) {
 	Vector repel_force;
 	double distance_squared;
 	for (std::shared_ptr<Enemy> e : Enemy::all_enemies) {
-		if (e.get() == this)
-			continue;
+	if (e.get() == this)
+	continue;
 
-		distance_squared = distanceSquared(Point{ x, y }, Point{ e->x, e->y });
-		if (distance_squared < (max_affecting_distance * max_affecting_distance)) {
-			//repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * repel / distance_squared);
-			repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * (1 - sqrt(distance_squared) / max_affecting_distance));
-		}
+	distance_squared = distanceSquared(Point{ x, y }, Point{ e->x, e->y });
+	if (distance_squared < (max_affecting_distance * max_affecting_distance)) {
+	//repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * repel / distance_squared);
+	repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * (1 - sqrt(distance_squared) / max_affecting_distance));
+	}
 	}
 	if (repel_force.getLength() > 0) {
-		repel_force.scaleBy(1 / (all_enemies.size() - 1));
+	repel_force.scaleBy(1 / (all_enemies.size() - 1));
 
-		if (repel_force.getLength() > speed * 2) {
-			repel_force.scaleTo(speed * 2);
-		}
-		velocity = velocity + repel_force;
+	if (repel_force.getLength() > speed * 2) {
+	repel_force.scaleTo(speed * 2);
+	}
+	velocity = velocity + repel_force;
 	}
 	*/
 
 	body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
 }
 
-void Enemy::draw(SDL_Renderer* ren) {
-	//filledCircleColor(ren, x, y, enemy_width/2, 0xff0000ff);
-	rect->x = (int)x - width / 2;
-	rect->y = (int)y - height / 2;
-	SDL_RenderCopy(ren, tex, NULL, rect);
+/*************
+ * Red Enemy *
+ *************/
+
+int RedEnemy::height = 0;
+int RedEnemy::width = 0;
+SDL_Texture* RedEnemy::tex = nullptr;
+
+RedEnemy::RedEnemy(int x, int y) : Enemy(x, y, height, width, tex, 2),
+	target(getPointOnRing({ 512, 320 }, (int)distance(Point{ 512, 320 }, Point{ 0, 0 }) + 50)) {}
+
+void RedEnemy::shoot() {
+	if (gun == nullptr) {
+		gun = std::make_shared<BulletSource<EnemyBullet>>(x, y);
+	} else {
+		gun->moveTo(x, y);
+	}
+	gun->fire(Vector({ (int)x, (int)y }, player->getLoc()).getAngle());
 }
 
-void Enemy::hit(int damage) {
-	hp -= damage;
-	Explosion::play_sound();
+void RedEnemy::step(double seconds) {
+	PhysicsParticle::step(seconds);
+
+	//calculate new velocity
+	Vector velocity = Vector(Point{ (int)x, (int)y }, target).scaleTo(speed);
+	body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
+
+	if (hp < 2) {
+		if (shot_time <= 0) {
+			shoot();
+			shot_time = max_shot_time;
+		}
+		shot_time -= seconds;
+	}
+	if (gun != nullptr)
+		gun->step(seconds);
 }
+
+bool RedEnemy::is_dead() const {
+	return Enemy::is_dead() || distance(target, Point{ (int)x, (int)y }) <= 5;
+}
+
+void RedEnemy::draw(SDL_Renderer* ren) {
+	Enemy::draw(ren);
+	if(gun != nullptr)
+		gun->draw_particles(ren);
+}
+
+/***************
+ * Enemy Spawn *
+ ***************/
 
 EnemySpawn::EnemySpawn(int screenWidth, int screenHeight) :
 	RingParticleSource( screenWidth / 2, screenHeight / 2,
-		(int)sqrt(distanceSquared(Point{ screenWidth/2, screenHeight/2 }, Point{ 0, 0 })) + 50,
+		(int)distance(Point{ screenWidth/2, screenHeight/2 }, Point{ 0, 0 }) + 50,
 		10, true, true) {}
 
 void EnemySpawn::generate_new_particles(int num) {
 	int n = particles.size();
 	RingParticleSource::generate_new_particles(num);
-	/*
-	size_t x = n;
-	std::list<std::shared_ptr<Enemy>>::reverse_iterator it = particles.rbegin();
-	while (x < particles.size()) {
-		Enemy::all_enemies.push_back(*it);
-		it++;
-		x++;
-	}
-	*/
 }
 
 void EnemySpawn::initialize_particles() {

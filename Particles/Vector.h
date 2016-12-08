@@ -48,3 +48,5 @@ double distanceSquared(const Point a, const Point b);
 double distance(const Point a, const Point b);
 
 Point rotate(const Point p, double angle, const Point center = { 0, 0 });
+
+Point getPointOnRing(Point center, int radius);

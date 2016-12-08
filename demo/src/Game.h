@@ -38,6 +38,7 @@ private:
 	void stepPhysics(double seconds);
 
 	void enemyHitPlayer(Enemy* e);
+	void bulletHitPlayer(Bullet* b);
 	void bulletHitEnemy(Enemy* e, Bullet* b);
 public:
 	std::mutex game_lock;

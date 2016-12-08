@@ -27,11 +27,8 @@ public:
 template <class P>
 void RingParticleSource<P>::generate_new_particles(int num) {
 	for (int k = 0; k < num; k++) {
-		double angle = 2 * PI * ((rand() % 200) / 200.0);
-		int myX = (int)(x + cos(angle) * radius);
-		int myY = (int)(y + sin(angle) * radius);
-
-		std::shared_ptr<P> new_particle = P::createParticleAt(myX, myY);
+		Point p = getPointOnRing({ x, y }, radius);
+		std::shared_ptr<P> new_particle = P::createParticleAt(p.x, p.y);
 		particles.push_back(new_particle);
 	}
 }

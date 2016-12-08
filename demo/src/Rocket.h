@@ -27,7 +27,7 @@ private:
 	b2Shape* shape = nullptr;
 	b2Fixture* fixture = nullptr;
 
-	BulletSource gun;
+	BulletSource<PlayerBullet> gun;
 
 	static constexpr double hit_blink_time = 1;
 	double my_hit_time = -1;

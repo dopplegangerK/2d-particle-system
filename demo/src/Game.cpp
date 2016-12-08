@@ -43,10 +43,16 @@ void Game::stepPhysics(double seconds) {
 			enemyHitPlayer((Enemy*)aObj->object);
 
 		//Collision between bullet and enemy
-		if (aObj->type == BULLET && bObj->type == ENEMY)
+		else if (aObj->type == BULLET && bObj->type == ENEMY)
 			bulletHitEnemy((Enemy*)bObj->object, (Bullet*)aObj->object);
-		else if(bObj->type == BULLET && aObj->type == ENEMY)
+		else if (bObj->type == BULLET && aObj->type == ENEMY)
 			bulletHitEnemy((Enemy*)aObj->object, (Bullet*)bObj->object);
+
+		//Collision between bullet and player
+		else if (aObj->type == BULLET && bObj->type == ROCKET)
+			bulletHitPlayer((Bullet*)aObj->object);
+		else if (bObj->type == BULLET && aObj->type == ROCKET)
+			bulletHitPlayer((Bullet*)bObj->object);
 	}
 	world->Step((float32)seconds, 8, 3);
 }
@@ -56,13 +62,21 @@ void Game::enemyHitPlayer(Enemy* e) {
 		life--;
 		rocket.hit();
 	}
-	e->hit(3);
+	e->hit(1);
+}
+
+void Game::bulletHitPlayer(Bullet* b) {
+	b->hit();
+	if (rocket.canHit()) {
+		life--;
+		rocket.hit();
+	}
 }
 
 void Game::bulletHitEnemy(Enemy* e, Bullet* b) {
 	b->hit();
-	e->hit(3);
-	score++;
+	e->hit(1);
+	score += e->pointValue();
 	score_change = true;
 }
 
@@ -148,7 +162,9 @@ void Game::cleanup_class() {
 }
 
 void Game::cleanup() {
-	cleanup_class<Enemy>();
+	cleanup_class<GreenEnemy>();
+	cleanup_class<RedEnemy>();
 	cleanup_class<Rocket>();
-	cleanup_class<Bullet>();
+	cleanup_class<PlayerBullet>();
+	cleanup_class<EnemyBullet>();
 }
