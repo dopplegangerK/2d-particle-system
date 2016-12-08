@@ -27,8 +27,6 @@ private:
 	EnemySpawn enemySpawn;
 	b2World* world;
 
-	static constexpr int max_lives = 3;
-	int life = max_lives;
 	int score = 0;
 	bool score_change = false;
 

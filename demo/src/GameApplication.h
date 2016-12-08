@@ -35,10 +35,11 @@ private:
 	Text start_text;
 	Text pause1_text;
 	Text pause2_text;
+	Text menu1_text;
+	Text menu2_text;
 	Text score_text;
 	Text end1_text;
-	Text end2_text;
-	Text end3_text;
+	Text end_score_text;
 
 	// music
 	static constexpr char* music_path = "../../demo/sounds/level3.mp3";

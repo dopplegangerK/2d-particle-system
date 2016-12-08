@@ -84,6 +84,7 @@ Rocket& Rocket::operator= (const Rocket& r) {
 	gun = r.gun;
 	explosion = r.explosion;
 	dead = r.dead;
+	life = r.life;
 	fire = r.fire;
 	my_hit_time = r.my_hit_time;
 	if (rect == nullptr && r.rect != nullptr) {
@@ -139,8 +140,15 @@ void Rocket::step(double seconds) {
 void Rocket::shoot() { fire = true; }
 
 void Rocket::hit() {
+	if (!canHit())
+		return;
+
 	my_hit_time = 0;
-	Mix_PlayChannel(-1, damage_sound, 3);
+	life--;
+	if (life == 0)
+		explode();
+	else
+		Mix_PlayChannel(-1, damage_sound, 3);
 }
 
 bool Rocket::canHit() {
@@ -154,6 +162,8 @@ void Rocket::explode() {
 		dead = true;
 	}
 }
+
+int Rocket::getLife() { return life; }
 
 Point Rocket::getLoc() const { return loc; }
 

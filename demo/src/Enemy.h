@@ -72,7 +72,7 @@ private:
 	static constexpr double max_shot_time = 0.75;
 	const Point target;
 
-	double shot_time = 0.5;
+	double shot_time = 0.2;
 	std::shared_ptr<BulletSource<EnemyBullet>> gun;
 
 	void shoot();

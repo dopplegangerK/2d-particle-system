@@ -16,7 +16,6 @@ void Game::startGame() {
 
 	rocket = Rocket({ 512, 320 }, 0);
 	score = 0;
-	life = 3;
 	enemySpawn.clear();
 	state = PLAY;
 
@@ -58,19 +57,13 @@ void Game::stepPhysics(double seconds) {
 }
 
 void Game::enemyHitPlayer(Enemy* e) {
-	if (rocket.canHit()) {
-		life--;
-		rocket.hit();
-	}
+	rocket.hit();
 	e->hit(1);
 }
 
 void Game::bulletHitPlayer(Bullet* b) {
 	b->hit();
-	if (rocket.canHit()) {
-		life--;
-		rocket.hit();
-	}
+	rocket.hit();
 }
 
 void Game::bulletHitEnemy(Enemy* e, Bullet* b) {
@@ -85,7 +78,6 @@ void Game::bulletHitEnemy(Enemy* e, Bullet* b) {
  *******************/
 
 void Game::endGame(double seconds) {
-	rocket.explode();
 	rocket.step(seconds);
 	enemySpawn.step_explosions(seconds);
 }
@@ -99,9 +91,12 @@ void Game::update(double seconds) {
 		return;
 	}
 
-	if (life == 0 || state == END) {
+	if (rocket.getLife() == 0 && state != END) {
 		state = END;
 		enemySpawn.step(seconds);
+	}
+
+	if (state == END) {
 		endGame(seconds);
 		game_lock.unlock();
 		return;
@@ -129,7 +124,7 @@ void Game::update(double seconds) {
 Rocket& Game::getRocket() { return rocket; }
 
 void Game::turnRocket(double newDir) {
-	if(life > 0)
+	if(rocket.getLife() > 0)
 		rocket.setDir(newDir);
 }
 
@@ -147,9 +142,9 @@ int Game::getScore() {
 	return score;
 }
 
-int Game::getLives() { return life; }
+int Game::getLives() { return rocket.getLife(); }
 
-int Game::maxLives() { return max_lives; }
+int Game::maxLives() { return Rocket::max_lives; }
 
 /***********
  * Cleanup *

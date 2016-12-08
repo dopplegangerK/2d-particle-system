@@ -30,13 +30,18 @@ private:
 
 	BulletSource<PlayerBullet> gun;
 
-	static constexpr double hit_blink_time = 1;
+	static constexpr double hit_blink_time = 0.7;
 	double my_hit_time = -1;
 
 	bool dead = false;
 	std::shared_ptr<Explosion> explosion = nullptr;
 
+	int life = max_lives;
+
 	void makePhysicsAttributes();
+
+	bool canHit();
+	void explode();
 public:
 	//drawing stuff
 	static constexpr char* sprite = "../../demo/sprites/playerShip3_blue.png";
@@ -47,6 +52,8 @@ public:
 	//sounds
 	static constexpr char* damage_sound_path = "../../demo/sounds/hurt.wav";
 	static Mix_Chunk* damage_sound;
+
+	static constexpr int max_lives = 3;
 
 	Rocket();
 	Rocket(const Rocket& r);
@@ -60,8 +67,7 @@ public:
 	double getDir() const;
 	void draw(SDL_Renderer* ren);
 	void hit();
-	bool canHit();
-	void explode();
+	int getLife();
 
 	static void setPhysicsWorld(b2World* world);
 };
