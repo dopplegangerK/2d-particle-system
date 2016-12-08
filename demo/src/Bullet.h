@@ -14,7 +14,7 @@ private:
 	SDL_Texture* myTex;
 
 	static b2World* world;
-	static b2Body* makeBulletBody(int x, int y);
+	static b2Body* makeBulletBody(int x, int y, double dir);
 	static b2Shape* makeBulletShape(int w, int h);
 public:
 	static void setPhysicsWorld(b2World* w);

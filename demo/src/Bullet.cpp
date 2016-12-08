@@ -10,23 +10,24 @@
 b2World* Bullet::world = nullptr;
 
 Bullet::Bullet(int x, int y, double dir, int w, int h, SDL_Texture* tex) :
-	PhysicsTrajectoryParticle(x, y, dir, SPEED, world, makeBulletBody(x, y), makeBulletShape(w, h), 3, 0, 0, 1, true),
+	PhysicsTrajectoryParticle(x, y, dir, SPEED, world, makeBulletBody(x, y, dir), makeBulletShape(w, h), 3, 0, 0, 1, true),
 	was_hit(false), myTex(tex) {
 	rect.w = w;
 	rect.h = h;
 }
 
-b2Body* Bullet::makeBulletBody(int x, int y) {
+b2Body* Bullet::makeBulletBody(int x, int y, double dir) {
 	b2BodyDef bodyDef;
 	bodyDef.position.Set((float32)x/10, (float32)y/10);
 	bodyDef.type = b2_kinematicBody;
 	bodyDef.bullet = true;
+	bodyDef.angle = dir;
 	return world->CreateBody(&bodyDef);
 }
 
 b2Shape* Bullet::makeBulletShape(int w, int h) {
 	b2PolygonShape* shape = new b2PolygonShape();
-	shape->SetAsBox((float32)w/10, (float32)h/10);
+	shape->SetAsBox((float32)h/20, (float32)w/20);
 	return shape;
 }
 
@@ -34,6 +35,16 @@ void Bullet::draw(SDL_Renderer* ren) {
 	rect.x = (int)x - rect.w / 2;
 	rect.y = (int)y - rect.h / 2;
 	SDL_RenderCopyEx(ren, myTex, NULL, &rect, toDegrees(angle) + 90, NULL, SDL_FLIP_NONE);
+
+	//draw corners of polygon for debugging purposes
+	/*
+	b2Transform t = body->GetTransform();
+	for (int k = 0; k < 4; k++) {
+		b2Vec2 vertex = ((b2PolygonShape*)shape)->GetVertex(k);
+		Point p = rotate({ (int)(vertex.x * 10), (int)(vertex.y * 10) }, t.q.GetAngle());
+		filledCircleColor(ren, p.x + x, p.y + y, 3, 0xff00ffff);
+	}
+	*/
 }
 
 bool Bullet::is_dead() const {
