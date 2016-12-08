@@ -1,9 +1,10 @@
 #include "Game.h"
-#include "Bullet.h"
 
+#include "Bullet.h"
+#include <SDL_mixer.h>
 #include <iostream>
 
-Game::Game() : enemySpawn(1024, 640), world(new b2World(b2Vec2(0, 0))) {
+Game::Game() : enemySpawn(1024, 640), world(new b2World(b2Vec2(0, 0))), state{ START } {
 	Enemy::setPlayer(&rocket);
 	Enemy::setPhysicsWorld(world);
 	Rocket::setPhysicsWorld(world);
@@ -11,11 +12,18 @@ Game::Game() : enemySpawn(1024, 640), world(new b2World(b2Vec2(0, 0))) {
 }
 
 void Game::startGame() {
+	game_lock.lock();
+
 	rocket = Rocket({ 512, 320 }, 0);
+	score = 0;
+	life = 3;
+	enemySpawn.clear();
+	state = PLAY;
+
+	game_lock.unlock();
 }
 
 void Game::stepPhysics(double seconds) {
-	world->Step((float32)seconds, 8, 3);
 	//look at collisions
 	for (b2Contact* c = world->GetContactList(); c; c = c->GetNext()) {
 		b2Fixture* A = c->GetFixtureA();
@@ -36,11 +44,14 @@ void Game::stepPhysics(double seconds) {
 		else if(bObj->type == BULLET && aObj->type == ENEMY)
 			bulletHitEnemy((Enemy*)aObj->object, (Bullet*)bObj->object);
 	}
+	world->Step((float32)seconds, 8, 3);
 }
 
 void Game::enemyHitPlayer(Enemy* e) {
-	life--;
-	rocket.hit();
+	if (rocket.canHit()) {
+		life--;
+		rocket.hit();
+	}
 	e->hit(3);
 }
 
@@ -53,6 +64,11 @@ void Game::bulletHitEnemy(Enemy* e, Bullet* b) {
 
 void Game::update(double seconds) {
 	game_lock.lock();
+
+	if (state == START) {
+		game_lock.unlock();
+		return;
+	}
 
 	if (life == 0) {
 		state = END;
@@ -85,6 +101,11 @@ void Game::turnRocket(double newDir) {
 }
 
 EnemySpawn& Game::getEnemySpawn() { return enemySpawn; }
+
+void Game::setState(GameState new_state) {
+	while(state != new_state)
+		state = new_state;
+}
 
 bool Game::scoreChanged() { return score_change; }
 

@@ -67,6 +67,8 @@ std::shared_ptr<ExplosionParticle> ExplosionParticle::createParticleAt(int x, in
 	return std::make_shared<ExplosionParticle>(x, y, angle, rad, dist, color, lifespan);
 }
 
+Mix_Chunk* Explosion::sound = nullptr;
+
 Explosion::Explosion(int x, int y):
 	PointParticleSource(x, y, 100, true, false) {
 	initialize_particles();
@@ -74,4 +76,8 @@ Explosion::Explosion(int x, int y):
 
 bool Explosion::is_over() {
 	return particles.size() == 0;
+}
+
+void Explosion::play_sound() {
+	Mix_PlayChannel(-1, sound, 0);
 }

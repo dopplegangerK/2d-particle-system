@@ -14,6 +14,7 @@ enum PhysicsObjType {
 };
 
 enum GameState {
+	START,
 	PLAY,
 	END
 };
@@ -55,6 +56,8 @@ public:
 	void turnRocket(double newDir);
 
 	EnemySpawn& getEnemySpawn();
+
+	void setState(GameState new_state);
 
 	bool scoreChanged();
 	int getScore();

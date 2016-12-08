@@ -85,6 +85,7 @@ void Enemy::draw(SDL_Renderer* ren) {
 
 void Enemy::hit(int damage) {
 	hp -= damage;
+	Explosion::play_sound();
 }
 
 EnemySpawn::EnemySpawn(int screenWidth, int screenHeight) :
@@ -163,4 +164,9 @@ void EnemySpawn::draw_particles(SDL_Renderer* ren) {
 		(*it).draw_particles(ren);
 		it++;
 	}
+}
+
+void EnemySpawn::clear() {
+	particles.clear();
+	explosions.clear();
 }

@@ -5,7 +5,7 @@
 #include <SDL2_gfxPrimitives.h>
 #include <SDL_image.h>
 
-#define FAIL { success = false; return; }
+#define FAIL  {success = false; return;}
 
 #define TICK 1000/60
 
@@ -71,6 +71,13 @@ void GameApplication::initSDL() {
 		SDL_Quit();
 		FAIL;
 	}
+	/*
+	if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
+		logSDLError("Mixer_Init");
+		SDL_Quit();
+		FAIL;
+	}
+	*/
 }
 
 void GameApplication::createWindow() {
@@ -125,29 +132,31 @@ void GameApplication::loadFont() {
 	small_font = openFont(font_path, 20);
 }
 
-SDL_Texture* GameApplication::loadText(const char* text, TTF_Font* font, SDL_Color color, SDL_Rect* src) {
-	SDL_Texture* tex = renderText(text, font, color, ren);
-	src->x = 0;
-	src->y = 0;
-	SDL_QueryTexture(tex, NULL, NULL, &src->w, &src->h);
-	return tex;
+Text GameApplication::loadText(const char* text, TTF_Font* font, SDL_Color color, Point p, bool centered) {
+	Text t;
+	t.tex = renderText(text, font, color, ren);
+	t.src.x = 0;
+	t.src.y = 0;
+	SDL_QueryTexture(t.tex, NULL, NULL, &t.src.w, &t.src.h);
+	t.dest.w = t.src.w;
+	t.dest.h = t.src.h;
+	if (centered) {
+		t.dest.x = p.x - t.dest.w / 2;
+		t.dest.y = p.y - t.dest.h / 2;
+	} else {
+		t.dest.x = p.x;
+		t.dest.y = p.y;
+	}
+	return t;
 }
 
 void GameApplication::loadAllText() {
-	pause1_text = loadText("PAUSED", big_font, WHITE_SDL_COLOR, &pause1_rect);
-	pause1_dest = pause1_rect;
-	pause1_dest.x = screenWidth / 2 - pause1_rect.w / 2;
-	pause1_dest.y = screenHeight / 2 - pause1_rect.h / 2;
-
-	pause2_text = loadText("ESC to resume", med_font, WHITE_SDL_COLOR, &pause2_rect);
-	pause2_dest = pause2_rect;
-	pause2_dest.x = screenWidth / 2 - pause2_rect.w / 2;
-	pause2_dest.y = screenHeight / 2 - pause2_rect.h / 2 + 50;
-
-	end_text = loadText("GAME OVER", big_font, WHITE_SDL_COLOR, &end_rect);
-	end_dest = end_rect;
-	end_dest.x = screenWidth / 2 - end_rect.w / 2;
-	end_dest.y = screenHeight / 2 - end_rect.h / 2;
+	start_text = loadText("Press any key to start", med_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 });
+	pause1_text = loadText("PAUSED", big_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 });
+	pause2_text = loadText("ESC to resume", med_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 + 55 });
+	end1_text = loadText("GAME OVER", big_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 - 20 });
+	end2_text = loadText("R to Restart", med_font, WHITE_SDL_COLOR, { screenWidth / 2, end1_text.dest.y + end1_text.dest.h/2 + 50 });
+	end3_text = loadText("Q to Quit", med_font, WHITE_SDL_COLOR, { screenWidth / 2, end2_text.dest.y + end2_text.dest.h / 2 + 40 });
 }
 
 GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, screenHeight, 100)  {
@@ -189,17 +198,17 @@ void GameApplication::drawEnemies() {
 	game.getEnemySpawn().draw_particles(ren);
 }
 
+void GameApplication::drawText(Text& t) {
+	SDL_RenderCopy(ren, t.tex, &t.src, &t.dest);
+}
+
 void GameApplication::drawScore() {
-	if (game.scoreChanged() || score_text == nullptr) {
+	if (game.scoreChanged() || score_text.tex == nullptr) {
 		std::string score_str = "Score: ";
 		score_str += std::to_string(game.getScore());
-		score_text = loadText(score_str.c_str(), med_font, WHITE_SDL_COLOR, &score_rect);
-		score_dest = score_rect;
-		score_dest.y = screenHeight - score_rect.h - 15;
-		score_dest.x = screenWidth - score_rect.w - 20;
+		score_text = loadText(score_str.c_str(), med_font, WHITE_SDL_COLOR, { screenWidth - 185, screenHeight - 45, }, false);
 	}
-
-	SDL_RenderCopy(ren, score_text, &score_rect, &score_dest);
+	drawText(score_text);
 }
 
 void GameApplication::drawLives() {
@@ -215,34 +224,45 @@ void GameApplication::drawLives() {
 	}
 }
 
+void GameApplication::drawStartScreen() {
+	drawText(start_text);
+}
+
 void GameApplication::drawPauseScreen() {
 	boxColor(ren, 0, 0, screenWidth, screenHeight, PAUSE_COLOR);
-	SDL_RenderCopy(ren, pause1_text, &pause1_rect, &pause1_dest);
-	SDL_RenderCopy(ren, pause2_text, &pause2_rect, &pause2_dest);
+	drawText(pause1_text);
+	drawText(pause2_text);
 }
 
 void GameApplication::drawEndScreen() {
-	SDL_RenderCopy(ren, end_text, &end_rect, &end_dest);
+	drawText(end1_text);
+	drawText(end2_text);
+	drawText(end3_text);
 }
 
 void GameApplication::drawAll() {
-	game.game_lock.lock();
-
 	SDL_RenderClear(ren);
 
 	drawBackground();
-	drawRocket();
-	drawEnemies();
-	drawScore();
-	drawLives();
 
-	game.game_lock.unlock();
+	if (game.getState() != START) {
+		game.game_lock.lock();
 
-	if (paused)
-		drawPauseScreen();
+		drawRocket();
+		drawEnemies();
+		drawScore();
+		drawLives();
 
-	if (game.getState() == GameState::END)
-		drawEndScreen();
+		game.game_lock.unlock();
+
+		if (paused && game.getState() == PLAY)
+			drawPauseScreen();
+
+		if (game.getState() == END)
+			drawEndScreen();
+	} else {
+		drawStartScreen();
+	}
 
 	render();
 }
@@ -250,6 +270,14 @@ void GameApplication::drawAll() {
 /*****************
 * Update methods *
 ******************/
+
+void GameApplication::startGame() {
+	paused = false;
+	game.startGame();
+	int mouseX, mouseY;
+	SDL_GetMouseState(&mouseX, &mouseY);
+	game.turnRocket(Vector(game.getRocket().getLoc(), { mouseX, mouseY }).getAngle());
+}
 
 Uint32 tick(Uint32 interval, void* args) {
 	GameApplication* g = (GameApplication*)args;
@@ -269,11 +297,8 @@ void GameApplication::run() {
 	if (!success)
 		return;
 
-	game.startGame();
-
 	//start the update timer
 	timer = SDL_AddTimer(TICK, (SDL_TimerCallback)tick, this);
-
 
 	//render/input loop
 	SDL_Event e;
@@ -295,7 +320,9 @@ void GameApplication::run() {
 				break;
 			}
 			case SDL_MOUSEBUTTONDOWN:
-				if (!mouseDown && !paused) {
+				if (game.getState() == START) {
+					startGame();
+				} else if (!mouseDown && !paused) {
 					game.getRocket().shoot();
 					mouseDown = true;
 				}
@@ -304,14 +331,27 @@ void GameApplication::run() {
 				mouseDown = false;
 				break;
 			case SDL_KEYDOWN:
-				if (e.key.keysym.sym == SDLK_ESCAPE && !escDown) {
-					paused = !paused;
-					escDown = true;
-					if (!paused) {
-						int mouseX, mouseY;
-						SDL_GetMouseState(&mouseX, &mouseY);
-						game.turnRocket(Vector(game.getRocket().getLoc(), { mouseX, mouseY }).getAngle());
-					}
+				switch (game.getState()) {
+					case START:
+						startGame();
+						break;
+					case PLAY:
+						if (e.key.keysym.sym == SDLK_ESCAPE && !escDown) {
+							paused = !paused;
+							escDown = true;
+							if (!paused) {
+								int mouseX, mouseY;
+								SDL_GetMouseState(&mouseX, &mouseY);
+								game.turnRocket(Vector(game.getRocket().getLoc(), { mouseX, mouseY }).getAngle());
+							}
+						}
+						break;
+					case END:
+						if (e.key.keysym.sym == SDLK_q)
+							quit = true;
+						else if (e.key.keysym.sym == SDLK_r)
+							game.setState(START);
+						break;
 				}
 				break;
 			case SDL_KEYUP:

@@ -11,7 +11,8 @@
 // type = 2
 class Rocket {
 private:
-	const double speed = 30;
+	static constexpr double speed = 30;
+
 	Point loc;
 	Vector direction;
 
@@ -22,9 +23,9 @@ private:
 	SDL_Rect* rect;
 
 	static b2World* world;
-	b2Body* body;
-	b2Shape* shape;
-	b2Fixture* fixture;
+	b2Body* body = nullptr;
+	b2Shape* shape = nullptr;
+	b2Fixture* fixture = nullptr;
 
 	BulletSource gun;
 
@@ -32,7 +33,7 @@ private:
 	double my_hit_time = -1;
 
 	bool dead = false;
-	Explosion* explosion = nullptr;
+	std::shared_ptr<Explosion> explosion = nullptr;
 
 	void makePhysicsAttributes();
 public:
@@ -54,6 +55,7 @@ public:
 	double getDir() const;
 	void draw(SDL_Renderer* ren);
 	void hit();
+	bool canHit();
 	void explode();
 
 	static void setPhysicsWorld(b2World* world);

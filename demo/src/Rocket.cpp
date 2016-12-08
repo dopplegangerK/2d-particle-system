@@ -36,6 +36,11 @@ Rocket::Rocket(Point loc, double dir) :
 }
 
 void Rocket::makePhysicsAttributes() {
+	//destroy everything first
+	if (body != nullptr) {
+		world->DestroyBody(body);
+		delete shape;
+	}
 	//body
 	b2BodyDef bodyDef;
 	bodyDef.position.Set((float32)loc.x/10, (float32)loc.y/10);
@@ -78,6 +83,8 @@ Rocket& Rocket::operator= (const Rocket& r) {
 	direction = r.direction;
 	gun = r.gun;
 	explosion = r.explosion;
+	dead = r.dead;
+	my_hit_time = r.my_hit_time;
 	if (rect == nullptr && r.rect != nullptr) {
 		rect = new SDL_Rect;
 	}
@@ -134,9 +141,14 @@ void Rocket::hit() {
 	my_hit_time = 0;
 }
 
+bool Rocket::canHit() {
+	return my_hit_time < 0;
+}
+
 void Rocket::explode() {
 	if (!dead) {
-		explosion = new Explosion(loc.x, loc.y);
+		explosion = std::make_shared<Explosion>(loc.x, loc.y);
+		Explosion::play_sound();
 		dead = true;
 	}
 }

@@ -6,6 +6,12 @@
 #include "Game.h"
 #include "Stars.h"
 
+struct Text {
+	SDL_Texture* tex = nullptr;
+	SDL_Rect src;
+	SDL_Rect dest;
+};
+
 class GameApplication {
 private:
 	friend Uint32 tick(Uint32 interval, void* args);
@@ -18,27 +24,22 @@ private:
 	SDL_Window* window = nullptr;
 	SDL_Renderer* ren = nullptr;
 
-	//text
+	// Stuff for text
 	static constexpr char* font_path = "../../demo/fonts/fixedsys.ttf";
 	TTF_Font* big_font;
 	TTF_Font* med_font;
 	TTF_Font* small_font;
 
-	SDL_Texture* pause1_text = nullptr;
-	SDL_Rect pause1_rect;
-	SDL_Rect pause1_dest;
+	Text start_text;
+	Text pause1_text;
+	Text pause2_text;
+	Text score_text;
+	Text end1_text;
+	Text end2_text;
+	Text end3_text;
 
-	SDL_Texture* pause2_text = nullptr;
-	SDL_Rect pause2_rect;
-	SDL_Rect pause2_dest;
-
-	SDL_Texture* score_text = nullptr;
-	SDL_Rect score_rect;
-	SDL_Rect score_dest;
-
-	SDL_Texture* end_text = nullptr;
-	SDL_Rect end_rect;
-	SDL_Rect end_dest;
+	// sound paths
+	static constexpr char* explosion_sound = "../../demo/sounds/Explosion+7.wav";
 
 	//any textures
 	static constexpr char* life_tex_path = "../../demo/sprites/playerLife3_blue.png";
@@ -61,7 +62,7 @@ private:
 	SDL_Texture* loadSprite(const char* path, SDL_Rect* rect);
 	template <class T> void loadClassSprite(double scale);
 	void loadFont();
-	SDL_Texture* loadText(const char* text, TTF_Font* font, SDL_Color color, SDL_Rect* src);
+	Text loadText(const char* text, TTF_Font* font, SDL_Color color, Point p, bool centered = true);
 	void loadAllText();
 
 	//draw methods
@@ -69,11 +70,15 @@ private:
 	void drawBackground();
 	void drawRocket();
 	void drawEnemies();
+	void drawText(Text& t);
 	void drawScore();
 	void drawLives();
+	void drawStartScreen();
 	void drawPauseScreen();
 	void drawEndScreen();
 	void drawAll();
+
+	void startGame();
 
 	void cleanup();
 public:

@@ -3,6 +3,7 @@
 
 #include "Fire.h"
 #include <Particles.h>
+#include <SDL_mixer.h>
 
 class ExplosionParticle : public FireParticle {
 private:
@@ -27,8 +28,10 @@ public:
 
 class Explosion : public PointParticleSource<ExplosionParticle> {
 public:
+	static Mix_Chunk* sound;
 	Explosion(int x, int y);
 	virtual bool is_over();
+	static void play_sound();
 };
 
 #endif
