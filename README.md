@@ -2,7 +2,7 @@
 
 Final project for Game Technology class at UT (CS 354R).
 
-A basic framework for a 2D particle system using SDL and SDL_gfx for graphics, and Box2D for physics.
+A basic framework for a 2D particle system using SDL and SDL_gfx for graphics, and Box2D for physics. (Will add more information later)
 
 ##particles folder
 
@@ -21,7 +21,6 @@ demonstrates the uses of the Particles library.
 - Box2D (can be found [here](https://github.com/erincatto/Box2D))
 
 ###Game credits:
-
-Sprites: [Kenney Vleugels] (www.kenney.nl)
-Music: [Jan125] (opengameart.org/content/stereotypical-90s-space-shooter-music)
-Sound effects: [timgormly] (www.freesound.org/people/timgormly/)
+- Sprites: [Kenney Vleugels] (http://opengameart.org/content/space-shooter-redux)
+- Music: [Jan125] (http://opengameart.org/content/stereotypical-90s-space-shooter-music#)
+- Sound effects: [timgormly] (https://www.freesound.org/people/timgormly/)
