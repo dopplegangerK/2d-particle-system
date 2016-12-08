@@ -88,10 +88,10 @@ void Game::endGame(double seconds) {
 	rocket.explode();
 	rocket.step(seconds);
 	enemySpawn.step_explosions(seconds);
-	//std::cout << "End of game\n";
 }
 
 void Game::update(double seconds) {
+
 	game_lock.lock();
 
 	if (state == START) {
@@ -99,7 +99,7 @@ void Game::update(double seconds) {
 		return;
 	}
 
-	if (life == 0) {
+	if (life == 0 || state == END) {
 		state = END;
 		enemySpawn.step(seconds);
 		endGame(seconds);

@@ -1,5 +1,6 @@
 #include "GameApplication.h"
 
+#include "Bullet.h"
 #include <iostream>
 #include <string>
 #include <SDL2_gfxPrimitives.h>
@@ -24,6 +25,14 @@ SDL_Texture* loadTexture(const char* file, SDL_Renderer *ren) {
 		logSDLError("LoadTexture");
 	}
 	return texture;
+}
+
+Mix_Chunk* loadWav(const char* path) {
+	Mix_Chunk* sound = Mix_LoadWAV(path);
+	if (sound == nullptr) {
+		logSDLError("LoadWAV");
+	}
+	return sound;
 }
 
 TTF_Font* openFont(const char* fontFile, int fontSize) {
@@ -75,7 +84,6 @@ void GameApplication::initSDL() {
 		SDL_Quit();
 		FAIL;
 	}
-	
 }
 
 void GameApplication::createWindow() {
@@ -124,6 +132,28 @@ void GameApplication::loadClassSprite(double scale) {
 	T::height = (int)(h * scale);
 }
 
+void GameApplication::loadSounds() {
+	int volume = 10;
+
+	Explosion::sound = loadWav(Explosion::sound_path);
+	Mix_VolumeChunk(Explosion::sound, volume);
+
+	Rocket::damage_sound = loadWav(Rocket::damage_sound_path);
+	Mix_VolumeChunk(Rocket::damage_sound, volume);
+
+	Mix_Chunk* laser_sound = loadWav(BulletSource<PlayerBullet>::sound_path);
+	Mix_VolumeChunk(laser_sound, volume);
+	BulletSource<EnemyBullet>::sound = laser_sound;
+	BulletSource<PlayerBullet>::sound = laser_sound;
+
+	music = Mix_LoadMUS(music_path);
+	if (music == nullptr) {
+		logSDLError("loadMUS");
+		FAIL;
+	}
+	Mix_VolumeMusic(MIX_MAX_VOLUME);
+}
+
 void GameApplication::loadFont() {
 	big_font = openFont(font_path, 72);
 	med_font = openFont(font_path, 32);
@@ -169,6 +199,8 @@ GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, s
 	loadClassSprite<PlayerBullet>(1);
 	loadClassSprite<EnemyBullet>(1);
 	life_tex = loadSprite(life_tex_path, &life_rect);
+
+	loadSounds();
 
 	loadFont();
 	loadAllText();
@@ -298,6 +330,8 @@ Uint32 tick(Uint32 interval, void* args) {
 void GameApplication::run() {
 	if (!success)
 		return;
+
+	Mix_PlayMusic(music, -1);
 
 	//start the update timer
 	timer = SDL_AddTimer(TICK, (SDL_TimerCallback)tick, this);

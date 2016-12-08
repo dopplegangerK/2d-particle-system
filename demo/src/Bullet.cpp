@@ -21,7 +21,7 @@ b2Body* Bullet::makeBulletBody(int x, int y, double dir) {
 	bodyDef.position.Set((float32)x/10, (float32)y/10);
 	bodyDef.type = b2_kinematicBody;
 	bodyDef.bullet = true;
-	bodyDef.angle = dir;
+	bodyDef.angle = (float32)dir;
 	return world->CreateBody(&bodyDef);
 }
 

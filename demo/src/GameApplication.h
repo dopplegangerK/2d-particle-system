@@ -40,8 +40,9 @@ private:
 	Text end2_text;
 	Text end3_text;
 
-	// sound paths
-	static constexpr char* explosion_sound = "../../demo/sounds/Explosion+7.wav";
+	// music
+	static constexpr char* music_path = "../../demo/sounds/level3.mp3";
+	Mix_Music* music = nullptr;
 
 	//any textures
 	static constexpr char* life_tex_path = "../../demo/sprites/playerLife3_blue.png";
@@ -63,6 +64,7 @@ private:
 	void createRenderer();
 	SDL_Texture* loadSprite(const char* path, SDL_Rect* rect);
 	template <class T> void loadClassSprite(double scale);
+	void loadSounds();
 	void loadFont();
 	Text loadText(const char* text, TTF_Font* font, SDL_Color color, Point p, bool centered = true);
 	void loadAllText();

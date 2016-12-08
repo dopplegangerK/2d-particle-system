@@ -43,7 +43,8 @@ void Enemy::draw(SDL_Renderer* ren) {
 
 void Enemy::hit(int damage) {
 	hp -= damage;
-	Explosion::play_sound();
+	if(hp <= 0)
+		Explosion::play_sound();
 }
 
 std::shared_ptr<Enemy> Enemy::createParticleAt(int x, int y) {

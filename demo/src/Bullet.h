@@ -3,6 +3,7 @@
 
 #include <Particles.h>
 #include <iostream>
+#include <SDL_Mixer.h>
 
 // type = 3
 class Bullet : public PhysicsTrajectoryParticle {
@@ -55,16 +56,26 @@ public:
 template <class B>
 class BulletSource : public PointParticleSource<B> {
 public:
+	static Mix_Chunk* sound;
+	static constexpr char* sound_path = "../../demo/sounds/laser.wav";
+
 	BulletSource(int x, int y);
 	virtual ~BulletSource() {}
 	virtual void fire(double direction);
 };
 
 template<class B>
+Mix_Chunk* BulletSource<B>::sound = nullptr;
+
+template<class B>
 BulletSource<B>::BulletSource(int x, int y) : PointParticleSource(x, y, 0, true, false) {}
 
 template<class B>
 void BulletSource<B>::fire(double direction) {
+	if (x < 0 || x >= 1024 || y < 0 || y >= 640)
+		return;
+
+	Mix_PlayChannel(-1, sound, 0);
 	std::shared_ptr<B> bullet = std::make_shared<B>(x, y, direction);
 	particles.push_back(bullet);
 }

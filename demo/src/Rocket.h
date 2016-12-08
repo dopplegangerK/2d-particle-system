@@ -6,6 +6,7 @@
 #include "Fire.h"
 #include "Explosion.h"
 #include <SDL.h>
+#include <SDL_Mixer.h>
 #include <Box2D\Box2D.h>
 
 // type = 2
@@ -42,6 +43,10 @@ public:
 	static SDL_Texture* tex;
 	static int width;
 	static int height;
+
+	//sounds
+	static constexpr char* damage_sound_path = "../../demo/sounds/hurt.wav";
+	static Mix_Chunk* damage_sound;
 
 	Rocket();
 	Rocket(const Rocket& r);

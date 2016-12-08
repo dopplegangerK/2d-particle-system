@@ -10,6 +10,7 @@ SDL_Texture* Rocket::tex = nullptr;
 b2World* Rocket::world = nullptr;
 
 Rocket::Rocket() : Rocket(Point{ 0, 0 }, 0) {}
+Mix_Chunk* Rocket::damage_sound = nullptr;
 
 #define corner2 { (int)(-height / 2.0), (int)(-width * 0.2) }
 #define corner1 { (int)(-height / 2.0), (int)(width * 0.2) }
@@ -83,6 +84,7 @@ Rocket& Rocket::operator= (const Rocket& r) {
 	gun = r.gun;
 	explosion = r.explosion;
 	dead = r.dead;
+	fire = r.fire;
 	my_hit_time = r.my_hit_time;
 	if (rect == nullptr && r.rect != nullptr) {
 		rect = new SDL_Rect;
@@ -138,6 +140,7 @@ void Rocket::shoot() { fire = true; }
 
 void Rocket::hit() {
 	my_hit_time = 0;
+	Mix_PlayChannel(-1, damage_sound, 3);
 }
 
 bool Rocket::canHit() {
