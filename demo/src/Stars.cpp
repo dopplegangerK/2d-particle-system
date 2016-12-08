@@ -8,7 +8,10 @@
 #define LIGHT_WHITE 0x32ffffff
 #define LIGHTER_WHITE 0x16ffffff
 
-Star::Star(int x, int y) : Particle(x, y) {
+Star::Star(int x, int y) : Particle(x, y), twinkle_time(0) {
+	// Generate a random time
+	max_twinkle_time = ((double)rand() / RAND_MAX) * 0.5 + 0.75;
+
 	// Generate a random size
 	radius = rand() % max_radius;
 
@@ -49,21 +52,33 @@ std::shared_ptr<Star> Star::createParticleAt(int x, int y) {
 	return std::make_shared<Star>(x, y);
 }
 
-void Star::draw(SDL_Renderer* ren) {
-	//filledCircleColor(ren, x, y, (radius + 1) * 4, LIGHTER_WHITE);
-	//filledCircleColor(ren, x, y, (radius + 1) * 2, LIGHTER_WHITE);
+void Star::step(double seconds) {
+	if (twinkle_time < 0)
+		twinkle_brighter = true;
+	else if(twinkle_time > max_twinkle_time)
+		twinkle_brighter = false;
+	
+	if (twinkle_brighter)
+		twinkle_time += seconds;
+	else
+		twinkle_time -= seconds;
+}
 
+void Star::draw(SDL_Renderer* ren) {
 	int myX = (int)x;
 	int myY = (int)y;
 
-	circleColor(ren, myX, myY, radius + 1, color);
-	circleColor(ren, myX, myY, radius, color);
+	double twinkle_amt = twinkle_time / max_twinkle_time - 0.5;
+	int draw_radius = radius + twinkle_amt * 2.5;
+
+	circleColor(ren, myX, myY, draw_radius + 1, color);
+	circleColor(ren, myX, myY, draw_radius, color);
 	//draw center
-	filledCircleColor(ren, myX, myY, radius, TRANSPARENT_WHITE);
-	filledCircleColor(ren, myX, myY, radius - 1, SOLID_WHITE);
+	filledCircleRGBA(ren, myX, myY, draw_radius, 255, 255, 255, 100 + twinkle_amt * 100);
+	filledCircleRGBA(ren, myX, myY, draw_radius - 1, 255, 255, 255, 205 + twinkle_amt * 100);
 }
 
 StarGenerator::StarGenerator(int x, int y, unsigned int w, unsigned int h, int numStars) :
-	ScatteredParticleSource(x, y, w, h, numStars, false, true) {}
+	ScatteredParticleSource(x, y, w, h, numStars, true, true) {}
 
 StarGenerator::~StarGenerator() {}

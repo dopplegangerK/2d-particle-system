@@ -7,8 +7,6 @@
 
 #define FAIL  {success = false; return;}
 
-#define TICK 1000/60
-
 // Color definitions
 #define BLACK 0xff000000
 #define PAUSE_COLOR 0x88000000
@@ -288,6 +286,7 @@ Uint32 tick(Uint32 interval, void* args) {
 	}
 
 	g->game.update((double)interval/1000);
+	g->stars.step((double)interval / 1000);
 	g->updated = true;
 
 	return interval;
@@ -332,26 +331,26 @@ void GameApplication::run() {
 				break;
 			case SDL_KEYDOWN:
 				switch (game.getState()) {
-					case START:
-						startGame();
-						break;
-					case PLAY:
-						if (e.key.keysym.sym == SDLK_ESCAPE && !escDown) {
-							paused = !paused;
-							escDown = true;
-							if (!paused) {
-								int mouseX, mouseY;
-								SDL_GetMouseState(&mouseX, &mouseY);
-								game.turnRocket(Vector(game.getRocket().getLoc(), { mouseX, mouseY }).getAngle());
-							}
+				case START:
+					startGame();
+					break;
+				case PLAY:
+					if (e.key.keysym.sym == SDLK_ESCAPE && !escDown) {
+						paused = !paused;
+						escDown = true;
+						if (!paused) {
+							int mouseX, mouseY;
+							SDL_GetMouseState(&mouseX, &mouseY);
+							game.turnRocket(Vector(game.getRocket().getLoc(), { mouseX, mouseY }).getAngle());
 						}
-						break;
-					case END:
-						if (e.key.keysym.sym == SDLK_q)
-							quit = true;
-						else if (e.key.keysym.sym == SDLK_r)
-							game.setState(START);
-						break;
+					}
+					break;
+				case END:
+					if (e.key.keysym.sym == SDLK_q)
+						quit = true;
+					else if (e.key.keysym.sym == SDLK_r)
+						game.setState(START);
+					break;
 				}
 				break;
 			case SDL_KEYUP:

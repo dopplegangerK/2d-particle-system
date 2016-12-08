@@ -23,6 +23,10 @@ void Game::startGame() {
 	game_lock.unlock();
 }
 
+/*******************
+ * Physics Updates *
+ *******************/
+
 void Game::stepPhysics(double seconds) {
 	//look at collisions
 	for (b2Contact* c = world->GetContactList(); c; c = c->GetNext()) {
@@ -62,6 +66,17 @@ void Game::bulletHitEnemy(Enemy* e, Bullet* b) {
 	score_change = true;
 }
 
+/*******************
+ * General updates *
+ *******************/
+
+void Game::endGame(double seconds) {
+	rocket.explode();
+	rocket.step(seconds);
+	enemySpawn.step_explosions(seconds);
+	//std::cout << "End of game\n";
+}
+
 void Game::update(double seconds) {
 	game_lock.lock();
 
@@ -93,6 +108,10 @@ void Game::update(double seconds) {
 	game_lock.unlock();
 }
 
+/**************************
+ * Getters, setters, etc. *
+ **************************/
+
 Rocket& Game::getRocket() { return rocket; }
 
 void Game::turnRocket(double newDir) {
@@ -118,12 +137,9 @@ int Game::getLives() { return life; }
 
 int Game::maxLives() { return max_lives; }
 
-void Game::endGame(double seconds) {
-	rocket.explode();
-	rocket.step(seconds);
-	enemySpawn.step_explosions(seconds);
-	//std::cout << "End of game\n";
-}
+/***********
+ * Cleanup *
+ ***********/
 
 template <class T>
 void Game::cleanup_class() {

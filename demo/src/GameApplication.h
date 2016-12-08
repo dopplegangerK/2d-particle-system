@@ -16,6 +16,8 @@ class GameApplication {
 private:
 	friend Uint32 tick(Uint32 interval, void* args);
 
+	static constexpr double TICK = 1000 / 60;
+
 	bool success;
 
 	// window stuff

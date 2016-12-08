@@ -9,6 +9,10 @@
 
 class Star : public Particle {
 protected:
+	double twinkle_time;
+	double max_twinkle_time;
+	bool twinkle_brighter;
+
 	static constexpr int max_radius = 4;
 	static constexpr int color_alpha_val = 140;
 	Uint32 color;
@@ -17,6 +21,7 @@ public:
 	Star(int x, int y);
 	static std::shared_ptr<Star> createParticleAt(int x, int y);
 	virtual bool is_dead() const { return false; }
+	virtual void step(double seconds);
 	virtual void draw(SDL_Renderer* ren);
 };
 
