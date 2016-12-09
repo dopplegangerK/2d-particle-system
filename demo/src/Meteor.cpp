@@ -5,6 +5,7 @@ b2World* Meteor::meteor_world = nullptr;
 int Meteor::height = 0;
 int Meteor::width = 0;
 SDL_Texture* Meteor::tex = nullptr;
+Mix_Chunk* Meteor::sound = nullptr;
 
 Meteor::Meteor(int x, int y, double angle, Point target) :
     PhysicsTrajectoryParticle(x, y, angle, speed, meteor_world, makeMeteorBody(x,y), makeMeteorShape(), 4, 5, 0, 1), target{target.x, target.y} {
@@ -14,6 +15,12 @@ Meteor::Meteor(int x, int y, double angle, Point target) :
         if(rand() % 2 == 0)
             clockwise = -1;
         body->ApplyAngularImpulse(10000 * clockwise, true);
+
+	channel = Mix_FadeInChannel(-1, sound, 0, 1000);
+}
+
+Meteor::~Meteor() {
+	Mix_FadeOutChannel(channel, 1000);
 }
 
 b2Body* Meteor::makeMeteorBody(int x, int y) {

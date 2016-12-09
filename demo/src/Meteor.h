@@ -3,6 +3,7 @@
 
 #include <Particles.h>
 #include <Box2D/Box2D.h>
+#include <SDL_mixer.h>
 
 //type = 4
 class Meteor : public PhysicsTrajectoryParticle {
@@ -12,11 +13,16 @@ private:
     static b2World* meteor_world;
 
     Point target;
+
+    int channel;
 public:
     static constexpr char* sprite = "../../demo/sprites/meteorGrey_big1.png";
     static SDL_Texture* tex;
     static int width;
     static int height;
+
+    static constexpr char* sound_path = "../../demo/sounds/rumble2.wav";
+    static Mix_Chunk* sound;
 
     static void setPhysicsWorld(b2World* world);
 
@@ -26,7 +32,7 @@ public:
     static std::shared_ptr<Meteor> createParticleAt(int x, int y);
 
     Meteor(int x, int y, double angle, Point p);
-    virtual ~Meteor() {}
+    virtual ~Meteor();
 
     virtual bool is_dead() const;
     virtual void draw(SDL_Renderer* ren);

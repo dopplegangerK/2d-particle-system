@@ -29,7 +29,7 @@ public:
 
 class Explosion : public PointParticleSource<ExplosionParticle> {
 public:
-	static constexpr char* sound_path = "../../demo/sounds/explosion.wav";
+	static constexpr char* sound_path = "../../demo/sounds/Explosion+7.wav";
 	static Mix_Chunk* sound;
 	Explosion(int x, int y);
 	virtual bool is_over();

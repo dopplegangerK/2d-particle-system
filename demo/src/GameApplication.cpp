@@ -134,10 +134,17 @@ void GameApplication::loadClassSprite(double scale) {
 }
 
 void GameApplication::loadSounds() {
+	music = Mix_LoadMUS(music_path);
+	if (music == nullptr) {
+		logSDLError("loadMUS");
+		FAIL;
+	}
+	Mix_VolumeMusic(MIX_MAX_VOLUME);
+
 	int volume = 10;
 
 	Explosion::sound = loadWav(Explosion::sound_path);
-	Mix_VolumeChunk(Explosion::sound, volume);
+	Mix_VolumeChunk(Explosion::sound, volume * 2);
 
 	Rocket::damage_sound = loadWav(Rocket::damage_sound_path);
 	Mix_VolumeChunk(Rocket::damage_sound, volume);
@@ -146,13 +153,8 @@ void GameApplication::loadSounds() {
 	Mix_VolumeChunk(laser_sound, volume);
 	BulletSource<EnemyBullet>::sound = laser_sound;
 	BulletSource<PlayerBullet>::sound = laser_sound;
-
-	music = Mix_LoadMUS(music_path);
-	if (music == nullptr) {
-		logSDLError("loadMUS");
-		FAIL;
-	}
-	Mix_VolumeMusic(MIX_MAX_VOLUME);
+        Meteor::sound = loadWav(Meteor::sound_path);
+	Mix_VolumeChunk(Meteor::sound, volume * 2);
 }
 
 void GameApplication::loadFont() {
