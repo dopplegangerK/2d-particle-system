@@ -158,9 +158,9 @@ void GameApplication::loadSounds() {
 }
 
 void GameApplication::loadFont() {
+	super_font = openFont(font_path, 100);
 	big_font = openFont(font_path, 72);
 	med_font = openFont(font_path, 32);
-	small_font = openFont(font_path, 20);
 }
 
 Text GameApplication::loadText(const char* text, TTF_Font* font, SDL_Color color, Point p, bool centered) {
@@ -182,7 +182,8 @@ Text GameApplication::loadText(const char* text, TTF_Font* font, SDL_Color color
 }
 
 void GameApplication::loadAllText() {
-	start_text = loadText("Press any key to start", med_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 });
+	title_text = loadText("Space!", super_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 });
+	start_text = loadText("Press any key to start", med_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 + 70 });
 	pause1_text = loadText("PAUSED", big_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 });
 	pause2_text = loadText("ESC to resume", med_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 + 55 });
 	end1_text = loadText("GAME OVER", big_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 });
@@ -267,6 +268,7 @@ void GameApplication::drawLives() {
 }
 
 void GameApplication::drawStartScreen() {
+        drawText(title_text);
 	drawText(start_text);
 }
 

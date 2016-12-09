@@ -28,11 +28,12 @@ private:
 
 	// Stuff for text
 	static constexpr char* font_path = "../../demo/fonts/fixedsys.ttf";
+	TTF_Font* super_font;
 	TTF_Font* big_font;
 	TTF_Font* med_font;
-	TTF_Font* small_font;
 
 	Text start_text;
+        Text title_text;
 	Text pause1_text;
 	Text pause2_text;
 	Text menu1_text;

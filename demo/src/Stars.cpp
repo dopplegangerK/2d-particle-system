@@ -86,8 +86,8 @@ void Star::draw(SDL_Renderer* ren) {
 	SDL_RenderCopy(ren, tex, NULL, &outer);
 
         SDL_Rect inner;
-        inner.w = radius * 2;
-        inner.h = radius * 2;
+        inner.w = draw_radius * 2;
+        inner.h = draw_radius * 2;
         inner.x = (int)x - inner.w/2;
         inner.y = (int)y- inner.h/2;
         SDL_SetTextureColorMod(tex, 255, 255, 255);
