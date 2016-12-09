@@ -200,6 +200,8 @@ GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, s
 	loadClassSprite<PlayerBullet>(1);
 	loadClassSprite<EnemyBullet>(1);
 	loadClassSprite<Meteor>(2);
+        loadClassSprite<FireParticle>(1);
+        loadClassSprite<Star>(1);
 	life_tex = loadSprite(life_tex_path, &life_rect);
 
 	loadSounds();

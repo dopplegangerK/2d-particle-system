@@ -2,12 +2,19 @@
 
 #define WHITE 0xffffffff
 
+int FireParticle::height = 0;
+int FireParticle::width = 0;
+SDL_Texture* FireParticle::tex = nullptr;
+
 FireParticle::FireParticle(int x, int y, double angle, int radius, int dist, uint32_t c, double lifespan):
 		TrajectoryParticle(x, y, angle, (int)(dist/lifespan)),
 		radius{ radius }, time_lived{ 0 }, lifespan{ lifespan } {
 	uint32_t* color_ptr = (uint32_t*)&color[0];
 	*color_ptr = c;
 	alpha = color[3];
+
+        rect.w = radius * 2;
+        rect.h = radius * 2;
 }
 
 bool FireParticle::is_dead() const {
@@ -38,14 +45,20 @@ void FireParticle::draw(SDL_Renderer* ren) {
 	*/
 
 	//racheter halo particles
-	
+/*	
 	uint8_t alpha = color[3];
 	color[3] = alpha / 4;
 	filledCircleColor(ren, (Sint16)x, (Sint16)y, (int)(radius + 2), *(uint32_t*)&color);
 	color[3] = alpha;
 	filledCircleColor(ren, (Sint16)x, (Sint16)y, radius, *(uint32_t*)&color);
-	
-	
+        */
+
+        //less rachet halo particles
+        rect.x = x - radius;
+        rect.y = y - radius;        
+        SDL_SetTextureColorMod(tex, color[0], color[1], color[2]);
+        SDL_SetTextureAlphaMod(tex, color[3]);
+	SDL_RenderCopy(ren, tex, NULL, &rect);
 }
 
 /* ROCKET FIRE PARTICLE */

@@ -8,6 +8,10 @@
 #define LIGHT_WHITE 0x32ffffff
 #define LIGHTER_WHITE 0x16ffffff
 
+int Star::height = 0;
+int Star::width = 0;
+SDL_Texture* Star::tex = nullptr;
+
 Star::Star(int x, int y) : Particle(x, y), twinkle_time(0) {
 	// Generate a random time
 	max_twinkle_time = ((double)rand() / RAND_MAX) * 0.5 + 0.75;
@@ -44,8 +48,9 @@ Star::Star(int x, int y) : Particle(x, y), twinkle_time(0) {
 			r = minColor;
 	}
 
-	uint8_t theColor[4] = { r, g, b, color_alpha_val };
-	color = *(Uint32*)&theColor;
+	color[0] = r;
+        color[1] = g;
+        color[2] = b;
 }
 
 std::shared_ptr<Star> Star::createParticleAt(int x, int y) {
@@ -71,11 +76,31 @@ void Star::draw(SDL_Renderer* ren) {
 	double twinkle_amt = twinkle_time / max_twinkle_time - 0.5;
 	int draw_radius = radius + twinkle_amt * 2.5;
 
+        SDL_Rect outer;
+        outer.w = draw_radius * 2 + 4;
+        outer.h = draw_radius * 2 + 4;
+        outer.x = (int)x - outer.w/2;
+        outer.y = (int)y- outer.h/2;
+        SDL_SetTextureColorMod(tex, color[0], color[1], color[2]);
+        SDL_SetTextureAlphaMod(tex, 255);
+	SDL_RenderCopy(ren, tex, NULL, &outer);
+
+        SDL_Rect inner;
+        inner.w = radius * 2;
+        inner.h = radius * 2;
+        inner.x = (int)x - inner.w/2;
+        inner.y = (int)y- inner.h/2;
+        SDL_SetTextureColorMod(tex, 255, 255, 255);
+        SDL_SetTextureAlphaMod(tex, 205 + twinkle_amt * 100);
+	SDL_RenderCopy(ren, tex, NULL, &inner);
+
+        /*
 	circleColor(ren, myX, myY, draw_radius + 1, color);
 	circleColor(ren, myX, myY, draw_radius, color);
 	//draw center
 	filledCircleRGBA(ren, myX, myY, draw_radius, 255, 255, 255, 100 + twinkle_amt * 100);
 	filledCircleRGBA(ren, myX, myY, draw_radius - 1, 255, 255, 255, 205 + twinkle_amt * 100);
+        */
 }
 
 StarGenerator::StarGenerator(int x, int y, unsigned int w, unsigned int h, int numStars) :

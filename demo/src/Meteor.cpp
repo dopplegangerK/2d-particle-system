@@ -10,10 +10,10 @@ Meteor::Meteor(int x, int y, double angle, Point target) :
     PhysicsTrajectoryParticle(x, y, angle, speed, meteor_world, makeMeteorBody(x,y), makeMeteorShape(), 4, 5, 0, 1), target{target.x, target.y} {
         double rotation = (rand() / RAND_MAX) * (2 * PI);
         body->SetTransform(body->GetPosition(), rotation);
-        int rotation = 1;
+        int clockwise = 1;
         if(rand() % 2 == 0)
-            rotation = -1;
-        body->ApplyAngularImpulse(10000 * rotation, true);
+            clockwise = -1;
+        body->ApplyAngularImpulse(10000 * clockwise, true);
 }
 
 b2Body* Meteor::makeMeteorBody(int x, int y) {
@@ -56,6 +56,7 @@ void Meteor::draw(SDL_Renderer* ren) {
     rect.y = (int)y - rect.h / 2;
     SDL_RenderCopyEx(ren, tex, NULL, &rect, toDegrees(body->GetAngle()), NULL, SDL_FLIP_NONE);
 
+    /*
     //draw collision shape's vertices, for debugging purposes
     b2Transform t = body->GetTransform();
     for (int k = 0; k < 6; k++) {
@@ -63,6 +64,7 @@ void Meteor::draw(SDL_Renderer* ren) {
 	Point p = rotate({ (int)(vertex.x * 10), (int)(vertex.y * 10) }, t.q.GetAngle());
 	filledCircleColor(ren, p.x + x, p.y + y, 3, 0xff00ffff);
     }
+    */
 }
 
 MeteorSpawn::MeteorSpawn(int screenWidth, int screenHeight) : 

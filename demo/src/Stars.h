@@ -13,11 +13,16 @@ protected:
 	double max_twinkle_time;
 	bool twinkle_brighter;
 
-	static constexpr int max_radius = 4;
-	static constexpr int color_alpha_val = 140;
-	Uint32 color;
+	static constexpr int max_radius = 6;
+	uint8_t color[3];
 	int radius;
 public:
+	//drawing stuff (public so we can set it from outside)
+	static constexpr char* sprite = "../../demo/sprites/fireParticle.png";
+	static SDL_Texture* tex;
+	static int width;
+	static int height;
+
 	Star(int x, int y);
 	static std::shared_ptr<Star> createParticleAt(int x, int y);
 	virtual bool is_dead() const { return false; }
