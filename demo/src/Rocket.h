@@ -67,6 +67,7 @@ public:
 	double getDir() const;
 	void draw(SDL_Renderer* ren);
 	void hit();
+        void kill();
 	int getLife();
 
 	static void setPhysicsWorld(b2World* world);

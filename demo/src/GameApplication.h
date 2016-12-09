@@ -75,6 +75,7 @@ private:
 	void drawBackground();
 	void drawRocket();
 	void drawEnemies();
+        void drawMeteors();
 	void drawText(Text& t);
 	void drawScore();
 	void drawLives();

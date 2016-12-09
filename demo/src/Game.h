@@ -3,6 +3,7 @@
 
 #include "Rocket.h"
 #include "Enemy.h"
+#include "Meteor.h"
 #include <Box2D/Box2D.h>
 #include <mutex>
 #include <SDL_mixer.h>
@@ -10,7 +11,8 @@
 enum PhysicsObjType {
 	ENEMY = 1,
 	ROCKET = 2,
-	BULLET = 3
+	BULLET = 3,
+        METEOR = 4
 };
 
 enum GameState {
@@ -25,6 +27,7 @@ private:
 
 	Rocket rocket;
 	EnemySpawn enemySpawn;
+        MeteorSpawn meteorSpawn;
 	b2World* world;
 
 	int score = 0;
@@ -38,6 +41,7 @@ private:
 	void enemyHitPlayer(Enemy* e);
 	void bulletHitPlayer(Bullet* b);
 	void bulletHitEnemy(Enemy* e, Bullet* b);
+        void meteorHit(PhysicsData* obj);
 public:
 	std::mutex game_lock;
 
@@ -55,6 +59,7 @@ public:
 	void turnRocket(double newDir);
 
 	EnemySpawn& getEnemySpawn();
+        MeteorSpawn& getMeteorSpawn();
 
 	void setState(GameState new_state);
 

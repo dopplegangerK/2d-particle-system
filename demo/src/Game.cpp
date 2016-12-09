@@ -1,14 +1,16 @@
 #include "Game.h"
 
 #include "Bullet.h"
+#include "Meteor.h"
 #include <SDL_mixer.h>
 #include <iostream>
 
-Game::Game() : enemySpawn(1024, 640), world(new b2World(b2Vec2(0, 0))), state{ START } {
+Game::Game() : enemySpawn(1024, 640), meteorSpawn(1024, 640), world(new b2World(b2Vec2(0, 0))), state{ START } {
 	Enemy::setPlayer(&rocket);
 	Enemy::setPhysicsWorld(world);
 	Rocket::setPhysicsWorld(world);
 	Bullet::setPhysicsWorld(world);
+        Meteor::setPhysicsWorld(world);
 }
 
 void Game::startGame() {
@@ -17,6 +19,7 @@ void Game::startGame() {
 	rocket = Rocket({ 512, 320 }, 0);
 	score = 0;
 	enemySpawn.clear();
+        meteorSpawn.clear();
 	state = PLAY;
 
 	game_lock.unlock();
@@ -52,6 +55,12 @@ void Game::stepPhysics(double seconds) {
 			bulletHitPlayer((Bullet*)aObj->object);
 		else if (bObj->type == BULLET && aObj->type == ROCKET)
 			bulletHitPlayer((Bullet*)bObj->object);
+
+                //Collision with meteor
+                if(aObj->type == METEOR)
+                    meteorHit(bObj);
+                else if(bObj->type == METEOR)
+                    meteorHit(aObj);
 	}
 	world->Step((float32)seconds, 8, 3);
 }
@@ -71,6 +80,22 @@ void Game::bulletHitEnemy(Enemy* e, Bullet* b) {
 	e->hit(1);
 	score += e->pointValue();
 	score_change = true;
+}
+
+void Game::meteorHit(PhysicsData* obj) {
+    switch((PhysicsObjType)obj->type) {
+        case BULLET:
+            ((Bullet*)(obj->object))->hit();
+            break;
+        case ENEMY:
+            ((Enemy*)(obj->object))->hit(3);
+            break;
+        case ROCKET:
+            rocket.kill();
+            break;
+        case METEOR:
+            break;
+    }
 }
 
 /*******************
@@ -109,6 +134,7 @@ void Game::update(double seconds) {
 
 	rocket.step(seconds);
 	enemySpawn.step(seconds);
+        meteorSpawn.step(seconds);
 
 	physics_is_running = true;
 	stepPhysics(seconds);
@@ -129,6 +155,8 @@ void Game::turnRocket(double newDir) {
 }
 
 EnemySpawn& Game::getEnemySpawn() { return enemySpawn; }
+
+MeteorSpawn& Game::getMeteorSpawn() { return meteorSpawn; }
 
 void Game::setState(GameState new_state) {
 	while(state != new_state)

@@ -23,6 +23,7 @@ public:
 	virtual void initialize_particles();
     virtual void step(double seconds);
     virtual void draw_particles(SDL_Renderer* ren);
+    virtual void clear();
 };
 
 template<class P>
@@ -60,6 +61,11 @@ void ParticleSource<P>::draw_particles(SDL_Renderer* ren) {
 	for (std::shared_ptr<P> particle : particles) {
 		particle->draw(ren);
 	}
+}
+
+template<class P>
+void ParticleSource<P>::clear() {
+    particles.clear();
 }
 
 #endif

@@ -30,7 +30,7 @@ b2Body* Enemy::makeEnemyBody(int x, int y) {
 
 b2Shape* Enemy::makeEnemyShape(int r) {
 	b2CircleShape* circle = new b2CircleShape();
-	circle->m_radius = (float32)(r / 20.0);
+	circle->m_radius = (float32)(r / 10.0);
 	return circle;
 }
 
@@ -48,8 +48,8 @@ void Enemy::hit(int damage) {
 }
 
 std::shared_ptr<Enemy> Enemy::createParticleAt(int x, int y) {
-	int color_choice = rand() % 4;
-	if (color_choice < 3)
+	int color_choice = rand() % 3;
+	if (color_choice < 2)
 		return std::make_shared<GreenEnemy>(x, y);
 	else
 		return std::make_shared<RedEnemy>(x, y);
@@ -174,6 +174,14 @@ void EnemySpawn::step(double seconds) {
 		time = 0;
 		generate_new_particles(1);
 	}
+        if(level < 10) {
+            level_time += seconds;
+            if(level_time >= level_length) {
+                level_time = 0;
+                level++;
+                time_to_spawn *= difficulty_coeff;
+            }
+        }
 
 	//step all enemies
 	{
@@ -223,6 +231,9 @@ void EnemySpawn::draw_particles(SDL_Renderer* ren) {
 }
 
 void EnemySpawn::clear() {
+        level = 0;
+        level_time = 0;
+        time_to_spawn = 1.5;
 	particles.clear();
 	explosions.clear();
 }

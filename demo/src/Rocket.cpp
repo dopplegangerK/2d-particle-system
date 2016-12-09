@@ -118,8 +118,12 @@ void Rocket::step(double seconds) {
 
 	loc.x = (int)(body->GetWorldCenter().x * 10);
 	loc.y = (int)(body->GetWorldCenter().y * 10);
-	body->SetLinearVelocity(b2Vec2((float32)direction.getX(), (float32)direction.getY()));
-	body->SetTransform(body->GetPosition(), (float32)(direction.getAngle() + PI/2));
+        if(body->GetContactList() == nullptr) {
+	    body->SetTransform(body->GetPosition(), (float32)(direction.getAngle() + PI/2));
+	    body->SetLinearVelocity(b2Vec2((float32)direction.getX(), (float32)direction.getY()));
+        } else {
+            direction = Vector::getDir(body->GetAngle() - PI/2).scaleTo(speed);
+        }
 
 	// update bullets
 	if (fire) {
@@ -135,6 +139,10 @@ void Rocket::step(double seconds) {
 	Point a = moveOrigin(rotate(corner2, angle), loc);
 	fire_source.moveTo(a, b);
 	fire_source.step(seconds);
+/*
+        if(body->GetAngle()/PI != direction.getAngle()/PI)
+            std::cout << "Body's angle: " << body->GetAngle()/PI << "PI\tRocket's angle: " << direction.getAngle()/PI << "PI\n";
+            */
 }
 
 void Rocket::shoot() { fire = true; }
@@ -149,6 +157,14 @@ void Rocket::hit() {
 		explode();
 	else
 		Mix_PlayChannel(-1, damage_sound, 3);
+}
+
+void Rocket::kill() {
+    if(!canHit())
+        return;
+
+    life = 0;
+    explode();
 }
 
 bool Rocket::canHit() {
@@ -185,16 +201,15 @@ void Rocket::draw(SDL_Renderer* ren) {
 		double angle = toDegrees(direction.getAngle()) + 90;
 		SDL_RenderCopyEx(ren, tex, NULL, rect, angle, NULL, SDL_FLIP_NONE);
 	}
-
+/*
 	//draw collision shape's vertices, for debugging purposes
-	/*
 	b2Transform t = body->GetTransform();
 	for (int k = 0; k < 3; k++) {
 		b2Vec2 vertex = ((b2PolygonShape*)shape)->GetVertex(k);
 		Point p = rotate({ (int)(vertex.x * 10), (int)(vertex.y * 10) }, t.q.GetAngle());
-		filledCircleColor(ren, p.x + loc.x, p.y + loc.y, 5, 0xff0000ff);
+		filledCircleColor(ren, p.x + loc.x, p.y + loc.y, 3, 0xff0000ff);
 	}
-	*/
+*/
 }
 
 void Rocket::setPhysicsWorld(b2World* w) { world = w; }

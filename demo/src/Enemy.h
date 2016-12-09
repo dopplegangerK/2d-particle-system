@@ -69,7 +69,7 @@ public:
 
 class RedEnemy : public Enemy {
 private:
-	static constexpr double max_shot_time = 0.75;
+	static constexpr double max_shot_time = 1.0;
 	const Point target;
 
 	double shot_time = 0.2;
@@ -95,8 +95,13 @@ public:
 
 class EnemySpawn : public RingParticleSource<Enemy> {
 private:
-	const int time_to_spawn = 1;
+        static constexpr double difficulty_coeff = 0.85;
+        static constexpr int level_length = 12;
+        int level = 0;
+
+	double time_to_spawn = 1.5;
 	double time = 0;
+        double level_time = 0;
 
 	std::list<Explosion> explosions;
 

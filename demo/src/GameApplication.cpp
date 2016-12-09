@@ -1,6 +1,7 @@
 #include "GameApplication.h"
 
 #include "Bullet.h"
+#include "Meteor.h"
 #include <iostream>
 #include <string>
 #include <SDL2_gfxPrimitives.h>
@@ -198,6 +199,7 @@ GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, s
 	loadClassSprite<RedEnemy>(0.5);
 	loadClassSprite<PlayerBullet>(1);
 	loadClassSprite<EnemyBullet>(1);
+	loadClassSprite<Meteor>(2);
 	life_tex = loadSprite(life_tex_path, &life_rect);
 
 	loadSounds();
@@ -228,6 +230,10 @@ void GameApplication::drawRocket() {
 
 void GameApplication::drawEnemies() {
 	game.getEnemySpawn().draw_particles(ren);
+}
+
+void GameApplication::drawMeteors() {
+	game.getMeteorSpawn().draw_particles(ren);
 }
 
 void GameApplication::drawText(Text& t) {
@@ -292,6 +298,7 @@ void GameApplication::drawAll() {
 
 		drawRocket();
 		drawEnemies();
+                drawMeteors();
 		drawScore();
 		drawLives();
 
