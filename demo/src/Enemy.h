@@ -5,7 +5,7 @@
 #include "Explosion.h"
 #include "Vector.h"
 #include "Bullet.h"
-#include <Box2D\Box2D.h>
+#include <Box2D/Box2D.h>
 #include <Particles.h>
 #include <SDL.h>
 #include <vector>

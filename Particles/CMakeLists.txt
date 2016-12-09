@@ -10,7 +10,11 @@ find_package(SDL2_gfx REQUIRED)
 
 target_include_directories(Particles PUBLIC ./ ../ ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR} ${SDL2_GFX_INCLUDE_DIR} )
 
-find_library(BOX2D_LIBRARY
-	NAMES Box2D
-	HINTS ../)
-target_link_libraries(Particles ${BOX2D_LIBRARY} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_GFX_LIBRARY})
+#find_library(BOX2D_LIBRARY
+#	NAMES Box2D
+#	HINTS ../)
+target_link_libraries(Particles
+    #${BOX2D_LIBRARY}
+    ${SDL2_LIBRARY}
+    ${SDL2_IMAGE_LIBRARY}
+    ${SDL2_GFX_LIBRARY})

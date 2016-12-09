@@ -28,7 +28,7 @@ public:
 
 template <class P>
 ScatteredParticleSource<P>::ScatteredParticleSource(int x, int y, unsigned int w, unsigned int h, int density, bool dynamic, bool constant) :
-	ParticleSource(density, dynamic, constant), x{ x }, y{ x }, width{ w }, height{ h }, xDist(x, x + w), yDist(y, y + h) { }
+	ParticleSource<P>(density, dynamic, constant), x{ x }, y{ x }, width{ w }, height{ h }, xDist(x, x + w), yDist(y, y + h) { }
 
 template <class P>
 void ScatteredParticleSource<P>::generate_new_particles(int num) {
@@ -42,7 +42,7 @@ void ScatteredParticleSource<P>::generate_new_particles(int num) {
 		int myX = xDist(generator);
 		int myY = yDist(generator);
 		std::shared_ptr<P> new_particle = P::createParticleAt(myX, myY);
-		particles.push_back(new_particle);
+                ParticleSource<P>::particles.push_back(new_particle);
 	}
 }
 

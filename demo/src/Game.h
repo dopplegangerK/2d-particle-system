@@ -3,7 +3,7 @@
 
 #include "Rocket.h"
 #include "Enemy.h"
-#include <Box2D\Box2D.h>
+#include <Box2D/Box2D.h>
 #include <mutex>
 #include <SDL_mixer.h>
 

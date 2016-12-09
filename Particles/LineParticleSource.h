@@ -17,7 +17,7 @@ protected:
 	virtual void generate_new_particles(int num);
 public:
 	LineParticleSource(int x1, int y1, int x2, int y2, int density, bool dynamic = true, bool constant = false) :
-		ParticleSource(density, dynamic, constant), x1{ x1 }, y1{ y1 }, x2{ x2 }, y2{ y2 } {}
+		ParticleSource<P>(density, dynamic, constant), x1{ x1 }, y1{ y1 }, x2{ x2 }, y2{ y2 } {}
 	virtual ~LineParticleSource() {}
 };
 
@@ -33,7 +33,7 @@ void LineParticleSource<P>::generate_new_particles(int num) {
 		Point p = moveBy(Point{ x1, y1 }, dist);
 
 		std::shared_ptr<P> new_particle = P::createParticleAt(p.x, p.y);
-		particles.push_back(new_particle);
+		ParticleSource<P>::particles.push_back(new_particle);
 	}
 }
 

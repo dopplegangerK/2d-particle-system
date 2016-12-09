@@ -38,7 +38,7 @@ template<class P>
 void ParticleSource<P>::step(double seconds) {
 	if (dynamic && particles.size() > 0) {
 		int dead = 0;
-		std::list<std::shared_ptr<P>>::iterator it = particles.begin();
+		typename std::list<std::shared_ptr<P>>::iterator it = particles.begin();
 		while (it != particles.end()) {
 			std::shared_ptr<P> particle = *it;
 			particle->step(seconds);

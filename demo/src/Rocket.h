@@ -6,8 +6,8 @@
 #include "Fire.h"
 #include "Explosion.h"
 #include <SDL.h>
-#include <SDL_Mixer.h>
-#include <Box2D\Box2D.h>
+#include <SDL_mixer.h>
+#include <Box2D/Box2D.h>
 
 // type = 2
 class Rocket {

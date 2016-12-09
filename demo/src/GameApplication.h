@@ -42,7 +42,7 @@ private:
 	Text end_score_text;
 
 	// music
-	static constexpr char* music_path = "../../demo/sounds/level3.mp3";
+	static constexpr char* music_path = "../../demo/sounds/level3.wav";
 	Mix_Music* music = nullptr;
 
 	//any textures

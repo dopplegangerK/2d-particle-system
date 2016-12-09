@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstdlib>
 #include "Vector.h"
 
 Vector::Vector() : x{ 0 }, y{ 0 }, length{ 0 } {}

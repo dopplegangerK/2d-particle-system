@@ -68,7 +68,7 @@ SDL_Texture* renderText(const std::string &message, TTF_Font* font,
  ******************/
 
 void GameApplication::initSDL() {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
 		logSDLError("SDL_Init Error: ");
 		FAIL;
 	}

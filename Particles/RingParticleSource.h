@@ -20,7 +20,7 @@ protected:
 	virtual void generate_new_particles(int num);
 public:
 	RingParticleSource(int x, int y, int radius, int density, bool dynamic = true, bool constant = false) :
-		ParticleSource(density, dynamic, constant), x{ x }, y{ y }, radius{ radius } {}
+		ParticleSource<P>(density, dynamic, constant), x{ x }, y{ y }, radius{ radius } {}
 	virtual ~RingParticleSource() {}
 };
 
@@ -29,7 +29,7 @@ void RingParticleSource<P>::generate_new_particles(int num) {
 	for (int k = 0; k < num; k++) {
 		Point p = getPointOnRing({ x, y }, radius);
 		std::shared_ptr<P> new_particle = P::createParticleAt(p.x, p.y);
-		particles.push_back(new_particle);
+		ParticleSource<P>::particles.push_back(new_particle);
 	}
 }
 
