@@ -18,6 +18,8 @@ void Game::startGame() {
 
 	rocket = Rocket({ 512, 320 }, 0);
 	score = 0;
+        score_change = true;
+
 	enemySpawn.clear();
         meteorSpawn.clear();
 	state = PLAY;
