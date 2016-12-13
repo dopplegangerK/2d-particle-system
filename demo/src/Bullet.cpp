@@ -1,6 +1,7 @@
 #include "Bullet.h"
 
 #include "ParticleSource.h"
+#include "Enemy.h"
 #include <memory>
 
 /**********
@@ -9,9 +10,9 @@
 
 b2World* Bullet::world = nullptr;
 
-Bullet::Bullet(int x, int y, double dir, int w, int h, SDL_Texture* tex) :
-	PhysicsTrajectoryParticle(x, y, dir, SPEED, world, makeBulletBody(x, y, dir), makeBulletShape(w, h), 3, 0, 0, 1, true),
-	was_hit(false), myTex(tex) {
+Bullet::Bullet(float x, float y, double dir, int w, int h, SDL_Texture* tex) :
+	PhysicsTrajectoryParticle(x, y, dir, speed, world, makeBulletBody((int)x, (int)y, dir), makeBulletShape(w, h), 3, 0, 0, 1, true),
+	was_hit(false), my_tex(tex) {
 	rect.w = w;
 	rect.h = h;
 }
@@ -32,9 +33,9 @@ b2Shape* Bullet::makeBulletShape(int w, int h) {
 }
 
 void Bullet::draw(SDL_Renderer* ren) {
-	rect.x = (int)x - rect.w / 2;
-	rect.y = (int)y - rect.h / 2;
-	SDL_RenderCopyEx(ren, myTex, NULL, &rect, toDegrees(angle) + 90, NULL, SDL_FLIP_NONE);
+	rect.x = (int)p.x - rect.w / 2;
+	rect.y = (int)p.y - rect.h / 2;
+	SDL_RenderCopyEx(ren, my_tex, NULL, &rect, toDegrees(angle) + 90, NULL, SDL_FLIP_NONE);
 
 	//draw corners of polygon for debugging purposes
 	/*
@@ -47,8 +48,8 @@ void Bullet::draw(SDL_Renderer* ren) {
 	*/
 }
 
-bool Bullet::is_dead() const {
-	return was_hit || (x < 0 || x >= 1024) || (y < 0 || y >= 640);
+bool Bullet::isDead() const {
+	return was_hit || (p.x < 0 || p.x >= 1024) || (p.y < 0 || p.y >= 640);
 }
 
 void Bullet::hit() {
@@ -65,11 +66,11 @@ int PlayerBullet::width = 0;
 int PlayerBullet::height = 0;
 SDL_Texture* PlayerBullet::tex = nullptr;
 
-PlayerBullet::PlayerBullet(int x, int y, double dir) : Bullet(x, y, dir, width, height, tex) {
+PlayerBullet::PlayerBullet(float x, float y, double dir) : Bullet(x, y, dir, width, height, tex) {
 	//filter out collisions with ship
 	b2Filter filter;
-	filter.categoryBits = 0x0004;
-	filter.maskBits = ~0x0002;
+	filter.categoryBits = collision_category;
+	filter.maskBits = ~Rocket::collision_category;
 	fixture->SetFilterData(filter);
 }
 
@@ -81,10 +82,10 @@ int EnemyBullet::width = 0;
 int EnemyBullet::height = 0;
 SDL_Texture* EnemyBullet::tex = nullptr;
 
-EnemyBullet::EnemyBullet(int x, int y, double dir) : Bullet(x, y, dir, width, height, tex) {
+EnemyBullet::EnemyBullet(float x, float y, double dir) : Bullet(x, y, dir, width, height, tex) {
 	//filter out collisions with enemies
 	b2Filter filter;
-	filter.categoryBits = 0x0010;
-	filter.maskBits = ~0x0008;
+	filter.categoryBits = collision_category;
+	filter.maskBits = ~Enemy::collision_category;
 	fixture->SetFilterData(filter);
 }

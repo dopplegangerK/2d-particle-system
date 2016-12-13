@@ -5,6 +5,8 @@
 #include <Box2D/Box2D.h>
 #include <SDL_mixer.h>
 
+using namespace Particles;
+
 //type = 4
 class Meteor : public PhysicsTrajectoryParticle {
 private:
@@ -26,15 +28,15 @@ public:
 
     static void setPhysicsWorld(b2World* world);
 
-    static b2Body* makeMeteorBody(int x, int y);
+    static b2Body* makeMeteorBody(float x, float y);
     static b2Shape* makeMeteorShape();
 
-    static std::shared_ptr<Meteor> createParticleAt(int x, int y);
+    static std::shared_ptr<Meteor> createParticleAt(float x, float y);
 
-    Meteor(int x, int y, double angle, Point p);
+    Meteor(float x, float y, double angle, Point p);
     virtual ~Meteor();
 
-    virtual bool is_dead() const;
+    virtual bool isDead() const;
     virtual void draw(SDL_Renderer* ren);
 };
 

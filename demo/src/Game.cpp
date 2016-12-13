@@ -3,14 +3,13 @@
 #include "Bullet.h"
 #include "Meteor.h"
 #include <SDL_mixer.h>
-#include <iostream>
 
 Game::Game() : enemySpawn(1024, 640), meteorSpawn(1024, 640), world(new b2World(b2Vec2(0, 0))), state{ START } {
 	Enemy::setPlayer(&rocket);
 	Enemy::setPhysicsWorld(world);
 	Rocket::setPhysicsWorld(world);
 	Bullet::setPhysicsWorld(world);
-        Meteor::setPhysicsWorld(world);
+	Meteor::setPhysicsWorld(world);
 }
 
 void Game::startGame() {
@@ -18,10 +17,10 @@ void Game::startGame() {
 
 	rocket = Rocket({ 512, 320 }, 0);
 	score = 0;
-        score_change = true;
+	score_change = true;
 
 	enemySpawn.clear();
-        meteorSpawn.clear();
+	meteorSpawn.clear();
 	state = PLAY;
 
 	game_lock.unlock();
@@ -36,7 +35,7 @@ void Game::stepPhysics(double seconds) {
 	for (b2Contact* c = world->GetContactList(); c; c = c->GetNext()) {
 		b2Fixture* A = c->GetFixtureA();
 		b2Fixture* B = c->GetFixtureB();
-		//std::cout << "collision\n";
+
 		PhysicsData* aObj = (PhysicsData*)A->GetUserData();
 		PhysicsData* bObj = (PhysicsData*)B->GetUserData();
 
@@ -57,12 +56,12 @@ void Game::stepPhysics(double seconds) {
 			bulletHitPlayer((Bullet*)aObj->object);
 		else if (bObj->type == BULLET && aObj->type == ROCKET)
 			bulletHitPlayer((Bullet*)bObj->object);
-
-                //Collision with meteor
-                if(aObj->type == METEOR)
-                    meteorHit(bObj);
-                else if(bObj->type == METEOR)
-                    meteorHit(aObj);
+		
+		//Collision with meteor
+		if(aObj->type == METEOR)
+			meteorHit(bObj);
+		else if(bObj->type == METEOR)
+			meteorHit(aObj);
 	}
 	world->Step((float32)seconds, 8, 3);
 }
@@ -106,7 +105,7 @@ void Game::meteorHit(PhysicsData* obj) {
 
 void Game::endGame(double seconds) {
 	rocket.step(seconds);
-	enemySpawn.step_explosions(seconds);
+	enemySpawn.stepExplosions(seconds);
 }
 
 void Game::update(double seconds) {
@@ -136,7 +135,7 @@ void Game::update(double seconds) {
 
 	rocket.step(seconds);
 	enemySpawn.step(seconds);
-        meteorSpawn.step(seconds);
+	meteorSpawn.step(seconds);
 
 	physics_is_running = true;
 	stepPhysics(seconds);

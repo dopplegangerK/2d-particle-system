@@ -3,38 +3,45 @@
 
 #include "ParticleSource.h"
 
-/*
- * A particle source that spawns particles at some central point.
- * Useful for things like explosions.
- */
+namespace Particles {
 
-template <class P>
-class PointParticleSource : public ParticleSource<P> {
-protected:
-	int x, y;
-	virtual void generate_new_particles(int num);
-public:
-	PointParticleSource(int x, int y, int density, bool dynamic = true, bool constant = false);
-	virtual ~PointParticleSource() {}
-	virtual void moveTo(int x, int y);
-};
+	/*
+	 * A particle source that spawns particles at some central point.
+	 * Useful for things like explosions.
+	 */
+	template <class P>
+	class PointParticleSource : public ParticleSource<P> {
+	protected:
+		Point p;
+		virtual void generateNewParticles(int num);
+	public:
+		PointParticleSource(float x, float y, int density, bool dynamic = true, bool constant = false);
+		PointParticleSource(Point p, int density, bool dynamic = true, bool constant = false);
+		virtual ~PointParticleSource() {}
+		virtual void moveTo(float x, float y);
+	};
 
-template<class P>
-PointParticleSource<P>::PointParticleSource(int x, int y, int density, bool dynamic, bool constant) :
-	ParticleSource<P>(density, dynamic, constant), x{ x }, y{ y } {}
+	template<class P>
+	PointParticleSource<P>::PointParticleSource(float x, float y, int density, bool dynamic, bool constant) :
+		ParticleSource<P>(density, dynamic, constant), p{ x, y } {}
 
-template<class P>
-void PointParticleSource<P>::generate_new_particles(int num) {
-	for (int k = 0; k < num; k++) {
-		std::shared_ptr<P> new_particle = P::createParticleAt(x, y);
-                ParticleSource<P>::particles.push_back(new_particle);
+	template<class P>
+	PointParticleSource<P>::PointParticleSource(Point p, int density, bool dynamic, bool constant) :
+		PointParticleSource<P>( p.x, p.y, density, dynamic, constant ) {}
+
+	template<class P>
+	void PointParticleSource<P>::generateNewParticles(int num) {
+		for (int k = 0; k < num; k++) {
+			std::shared_ptr<P> new_particle = P::createParticleAt(p.x, p.y);
+			ParticleSource<P>::particles.push_back(new_particle);
+		}
 	}
-}
 
-template <class P>
-void PointParticleSource<P>::moveTo(int newX, int newY) {
-	x = newX;
-	y = newY;
+	template <class P>
+	void PointParticleSource<P>::moveTo(float newX, float newY) {
+		p.x = newX;
+		p.y = newY;
+	}
 }
 
 #endif

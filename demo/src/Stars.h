@@ -7,6 +7,8 @@
 #include "Particle.h"
 #include "ScatteredParticleSource.h"
 
+using namespace Particles;
+
 class Star : public Particle {
 protected:
 	double twinkle_time;
@@ -23,9 +25,9 @@ public:
 	static int width;
 	static int height;
 
-	Star(int x, int y);
-	static std::shared_ptr<Star> createParticleAt(int x, int y);
-	virtual bool is_dead() const { return false; }
+	Star(float x, float y);
+	static std::shared_ptr<Star> createParticleAt(float x, float y);
+	virtual bool isDead() const { return false; }
 	virtual void step(double seconds);
 	virtual void draw(SDL_Renderer* ren);
 };

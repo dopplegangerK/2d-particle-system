@@ -2,16 +2,11 @@
 
 #include "Bullet.h"
 #include "Meteor.h"
-#include <iostream>
 #include <string>
 #include <SDL2_gfxPrimitives.h>
 #include <SDL_image.h>
 
 #define FAIL  {success = false; return;}
-
-// Color definitions
-#define BLACK 0xff000000
-#define PAUSE_COLOR 0x88000000
 
 #define WHITE_SDL_COLOR SDL_Color{255, 255, 255, 255}
 
@@ -172,27 +167,27 @@ Text GameApplication::loadText(const char* text, TTF_Font* font, SDL_Color color
 	t.dest.w = t.src.w;
 	t.dest.h = t.src.h;
 	if (centered) {
-		t.dest.x = p.x - t.dest.w / 2;
-		t.dest.y = p.y - t.dest.h / 2;
+		t.dest.x = (int)(p.x - t.dest.w / 2);
+		t.dest.y = (int)(p.y - t.dest.h / 2);
 	} else {
-		t.dest.x = p.x;
-		t.dest.y = p.y;
+		t.dest.x = (int)p.x;
+		t.dest.y = (int)p.y;
 	}
 	return t;
 }
 
 void GameApplication::loadAllText() {
-	title_text = loadText("Space!", super_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 });
-	start_text = loadText("Press any key to start", med_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 + 70 });
-	pause1_text = loadText("PAUSED", big_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 });
-	pause2_text = loadText("ESC to resume", med_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 + 55 });
-	end1_text = loadText("GAME OVER", big_font, WHITE_SDL_COLOR, { screenWidth / 2, screenHeight / 2 });
-	menu1_text = loadText("R to restart", med_font, WHITE_SDL_COLOR, { 20, 20 }, false);
-	menu2_text = loadText("Q to quit", med_font, WHITE_SDL_COLOR, { 20, 70 }, false);
+	title_text = loadText("Space!", super_font, WHITE_SDL_COLOR, { screenWidth / 2.0f, screenHeight / 2.0f });
+	start_text = loadText("Press any key to start", med_font, WHITE_SDL_COLOR, { screenWidth / 2.0f, screenHeight / 2.0f + 70 });
+	pause1_text = loadText("PAUSED", big_font, WHITE_SDL_COLOR, { screenWidth / 2.0f, screenHeight / 2.0f });
+	pause2_text = loadText("ESC to resume", med_font, WHITE_SDL_COLOR, { screenWidth / 2.0f, screenHeight / 2.0f + 55 });
+	end1_text = loadText("GAME OVER", big_font, WHITE_SDL_COLOR, { screenWidth / 2.0f, screenHeight / 2.0f });
+	menu1_text = loadText("R to restart", med_font, WHITE_SDL_COLOR, { 20.0f, 20.0f }, false);
+	menu2_text = loadText("Q to quit", med_font, WHITE_SDL_COLOR, { 20.0f, 70.0f }, false);
 }
 
 GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, screenHeight, 100)  {
-	stars.initialize_particles();
+	stars.initializeParticles();
 	initSDL();
 	createWindow();
 	createRenderer();
@@ -203,8 +198,8 @@ GameApplication::GameApplication() : success{ true }, stars(0, 0, screenWidth, s
 	loadClassSprite<PlayerBullet>(1);
 	loadClassSprite<EnemyBullet>(1);
 	loadClassSprite<Meteor>(2);
-        loadClassSprite<FireParticle>(1);
-        loadClassSprite<Star>(1);
+	loadClassSprite<FireParticle>(1);
+	loadClassSprite<Star>(1);
 	life_tex = loadSprite(life_tex_path, &life_rect);
 
 	loadSounds();
@@ -224,8 +219,9 @@ void GameApplication::render() {
 }
 
 void GameApplication::drawBackground() {
-	boxColor(ren, 0, 0, screenWidth, screenHeight, BLACK);
-	stars.draw_particles(ren);
+	// Black rectangle
+	boxRGBA(ren, 0, 0, screenWidth, screenHeight, 0, 0, 0, 255);
+	stars.drawParticles(ren);
 }
 
 void GameApplication::drawRocket() {
@@ -234,11 +230,11 @@ void GameApplication::drawRocket() {
 }
 
 void GameApplication::drawEnemies() {
-	game.getEnemySpawn().draw_particles(ren);
+	game.getEnemySpawn().drawParticles(ren);
 }
 
 void GameApplication::drawMeteors() {
-	game.getMeteorSpawn().draw_particles(ren);
+	game.getMeteorSpawn().drawParticles(ren);
 }
 
 void GameApplication::drawText(Text& t) {
@@ -249,7 +245,7 @@ void GameApplication::drawScore() {
 	if (game.scoreChanged() || score_text.tex == nullptr) {
 		std::string score_str = "Score: ";
 		score_str += std::to_string(game.getScore());
-		score_text = loadText(score_str.c_str(), med_font, WHITE_SDL_COLOR, { screenWidth - 210, screenHeight - 45, }, false);
+		score_text = loadText(score_str.c_str(), med_font, WHITE_SDL_COLOR, { (float)(screenWidth - 210), (float)(screenHeight - 45), }, false);
 	}
 	drawText(score_text);
 }
@@ -273,7 +269,7 @@ void GameApplication::drawStartScreen() {
 }
 
 void GameApplication::drawPauseScreen() {
-	boxColor(ren, 0, 0, screenWidth, screenHeight, PAUSE_COLOR);
+	boxRGBA(ren, 0, 0, screenWidth, screenHeight, 0, 0, 0, 0x88);
 	drawText(pause1_text);
 	drawText(pause2_text);
 	drawText(menu1_text);
@@ -281,7 +277,7 @@ void GameApplication::drawPauseScreen() {
 }
 
 void GameApplication::drawEndScreen() {
-	boxColor(ren, 0, 0, screenWidth, screenHeight, PAUSE_COLOR);
+	boxRGBA(ren, 0, 0, screenWidth, screenHeight, 0, 0, 0, 0x88);
 	drawText(end1_text);
 	drawText(menu1_text);
 	drawText(menu2_text);
@@ -289,7 +285,7 @@ void GameApplication::drawEndScreen() {
 	if (end_score_text.tex == nullptr) {
 		std::string score_str = "Final Score: ";
 		score_str += std::to_string(game.getScore());
-		end_score_text = loadText(score_str.c_str(), med_font, WHITE_SDL_COLOR, { screenWidth/2, screenHeight/2 + 55});
+		end_score_text = loadText(score_str.c_str(), med_font, WHITE_SDL_COLOR, { screenWidth/2.0f, screenHeight/2.0f + 55.0f});
 	}
 	drawText(end_score_text);
 }
@@ -335,7 +331,7 @@ void GameApplication::startGame() {
 	game.startGame();
 	int mouseX, mouseY;
 	SDL_GetMouseState(&mouseX, &mouseY);
-	game.turnRocket(Vector(game.getRocket().getLoc(), { mouseX, mouseY }).getAngle());
+	game.turnRocket(Vector(game.getRocket().getLoc(), { (float)mouseX, (float)mouseY }).getAngle());
 }
 
 Uint32 tick(Uint32 interval, void* args) {
@@ -346,7 +342,7 @@ Uint32 tick(Uint32 interval, void* args) {
 		return interval;
 	}
 
-	g->game.update((double)interval/1000);
+	g->game.update((double)interval / 1000);
 	g->stars.step((double)interval / 1000);
 	g->updated = true;
 
@@ -377,7 +373,7 @@ void GameApplication::run() {
 				if (!paused) {
 					int mouseX, mouseY;
 					SDL_GetMouseState(&mouseX, &mouseY);
-					game.turnRocket(Vector(game.getRocket().getLoc(), { mouseX, mouseY }).getAngle());
+					game.turnRocket(Vector(game.getRocket().getLoc(), { (float)mouseX, (float)mouseY }).getAngle());
 				}
 				break;
 			}
@@ -404,7 +400,7 @@ void GameApplication::run() {
 						if (!paused) {
 							int mouseX, mouseY;
 							SDL_GetMouseState(&mouseX, &mouseY);
-							game.turnRocket(Vector(game.getRocket().getLoc(), { mouseX, mouseY }).getAngle());
+							game.turnRocket(Vector(game.getRocket().getLoc(), { (float)mouseX, (float)mouseY }).getAngle());
 						}
 					} else if (paused) {
 						if (e.key.keysym.sym == SDLK_q)

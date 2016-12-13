@@ -3,8 +3,10 @@
 
 #include <Particles.h>
 
+using namespace Particles;
+
 // Superclass for fire particle effects (including explosions).
-// Not for direct use in a particle system. (no factory constructor)
+// Not for direct use in a particle system (has no factory constructor)
 class FireParticle : public TrajectoryParticle {
 protected:
 	int radius;
@@ -12,8 +14,8 @@ protected:
 	double time_lived;
 	uint8_t color[4];
 	int alpha;
-
-        SDL_Rect rect;
+	
+	SDL_Rect rect;
 
 	virtual void fade();
 public:
@@ -23,14 +25,14 @@ public:
 	static int width;
 	static int height;
 
-	FireParticle(int x, int y, double angle, int radius, int dist, uint32_t color, double lifespan);
+	FireParticle(float x, float y, double angle, int radius, int dist, uint8_t color[4], double lifespan);
 	virtual ~FireParticle() {}
-	virtual bool is_dead() const;
+	virtual bool isDead() const;
 	virtual void step(double seconds);
 	virtual void draw(SDL_Renderer* ren);
 };
 
-//specific class for fire coming off the player's ship
+// Specific class for fire coming off the player's ship
 class RocketFireParticle : public FireParticle {
 private:
 	double r;
@@ -44,13 +46,12 @@ private:
 	static constexpr int min_particle_radius = 3;
 	static double spawn_angle;
 public:
-	RocketFireParticle(int x, int y, double angle, int radius, int dist, uint32_t color, double lifespan);
+	RocketFireParticle(float x, float y, double angle, int radius, int dist, uint8_t color[4], double lifespan);
 	virtual ~RocketFireParticle() {}
-	//virtual void draw(SDL_Renderer* ren);
 	virtual void fade();
 
-	static void set_angle(double angle);
-	static std::shared_ptr<RocketFireParticle> createParticleAt(int x, int y);
+	static void setAngle(double angle);
+	static std::shared_ptr<RocketFireParticle> createParticleAt(float x, float y);
 };
 
 class RocketFireSource : public LineParticleSource<RocketFireParticle> {
@@ -58,7 +59,7 @@ public:
 	RocketFireSource();
 	RocketFireSource(Point a, Point b);
 	virtual void moveTo(Point newA, Point newB);
-	virtual void generate_new_particles(int num);
+	virtual void generateNewParticles(int num);
 };
 
 #endif

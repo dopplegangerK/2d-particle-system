@@ -3,50 +3,53 @@
 
 #define PI 3.141592653589793238462643383279502884L
 
-struct Point {
-	int x;
-	int y;
-};
+namespace Particles {
 
-class Vector {
-private:
-	double x;
-	double y;
-	double length;
-public:
-	Vector();
-	Vector(double x, double y);
-	Vector(const Point start, const Point end);
-	int getX() const;
-	int getY() const;
-	double getLength() const;
-	double getAngle() const;
-	void reset(int newX, int newY);
-	Vector getUnit() const;
-	Vector getPerp() const;
-	Vector getOpposite() const;
-	Vector scaleBy(double scale);
-	Vector scaleTo(double length);
+	struct Point {
+		float x;
+		float y;
+	};
 
-	Vector operator+ (const Vector& other) const {
-		return Vector(x + other.x, y + other.y);
-	}
+	class Vector {
+	private:
+		double x;
+		double y;
+		double length;
+	public:
+		Vector();
+		Vector(double x, double y);
+		Vector(const Point start, const Point end);
+		int getX() const;
+		int getY() const;
+		double getLength() const;
+		double getAngle() const;
+		void reset(int newX, int newY);
+		Vector getUnit() const;
+		Vector getPerp() const;
+		Vector getOpposite() const;
+		Vector scaleBy(double scale);
+		Vector scaleTo(double length);
 
-	static Vector getDir(double angle);
+		Vector operator+ (const Vector& other) const {
+			return Vector(x + other.x, y + other.y);
+		}
 
-	void flip();
-};
+		static Vector getDir(double angle);
 
-Point moveBy(const Point p, const Vector dir);
+		void flip();
+	};
 
-Point moveOrigin(const Point p, const Point newOrigin);
+	Point moveBy(const Point p, const Vector dir);
 
-double toDegrees(double radians);
+	Point moveOrigin(const Point p, const Point newOrigin);
 
-double distanceSquared(const Point a, const Point b);
+	double toDegrees(double radians);
 
-double distance(const Point a, const Point b);
+	double distanceSquared(const Point a, const Point b);
 
-Point rotate(const Point p, double angle, const Point center = { 0, 0 });
+	double distance(const Point a, const Point b);
 
-Point getPointOnRing(Point center, int radius);
+	Point rotate(const Point p, double angle, const Point center = { 0, 0 });
+
+	Point getPointOnRing(Point center, float radius);
+}

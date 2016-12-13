@@ -5,19 +5,20 @@
 Rocket* Enemy::player = nullptr;
 b2World* Enemy::enemy_world = nullptr;
 
-Enemy::Enemy(int x, int y, int w, int h, SDL_Texture* tex, int hp) :
-		PhysicsParticle(x, y, enemy_world, makeEnemyBody(x, y), makeEnemyShape(w/2), 1, 1),
+Enemy::Enemy(float x, float y, int w, int h, SDL_Texture* tex, int hp) :
+		PhysicsParticle(x, y, enemy_world, makeEnemyBody((int)x, (int)y), makeEnemyShape(w/2), 1, 1),
 		direction{ 0, 0 }, myTex{ tex }, hp { hp } {
 	speed = rand() % (max_speed - min_speed) + min_speed;
 	rect.w = w;
 	rect.h = h;
 
-	Vector velocity(Point{ (int)x, (int)y }, player->getLoc());
+	Vector velocity(p, player->getLoc());
 	velocity = velocity.scaleTo(speed);
 	body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
 
+	// Set filter category so we don't collide with our own bullets
 	b2Filter filter;
-	filter.categoryBits = 0x0008;
+	filter.categoryBits = collision_category;
 	fixture->SetFilterData(filter);
 }
 
@@ -35,19 +36,18 @@ b2Shape* Enemy::makeEnemyShape(int r) {
 }
 
 void Enemy::draw(SDL_Renderer* ren) {
-	//filledCircleColor(ren, x, y, enemy_width/2, 0xff0000ff);
-	rect.x = (int)x - rect.w / 2;
-	rect.y = (int)y - rect.h / 2;
+	rect.x = (int)p.x - rect.w / 2;
+	rect.y = (int)p.y - rect.h / 2;
 	SDL_RenderCopy(ren, myTex, NULL, &rect);
 }
 
 void Enemy::hit(int damage) {
 	hp -= damage;
 	if(hp <= 0)
-		Explosion::play_sound();
+		Explosion::playSound();
 }
 
-std::shared_ptr<Enemy> Enemy::createParticleAt(int x, int y) {
+std::shared_ptr<Enemy> Enemy::createParticleAt(float x, float y) {
 	int color_choice = rand() % 3;
 	if (color_choice < 2)
 		return std::make_shared<GreenEnemy>(x, y);
@@ -63,41 +63,11 @@ int GreenEnemy::height = 0;
 int GreenEnemy::width = 0;
 SDL_Texture* GreenEnemy::tex = nullptr;
 
-GreenEnemy::GreenEnemy(int x, int y) : Enemy(x, y, width, height, tex, 1) {}
+GreenEnemy::GreenEnemy(float x, float y) : Enemy(x, y, width, height, tex, 1) {}
 
 void GreenEnemy::step(double seconds) {
 	PhysicsParticle::step(seconds);
-
-	//calculate new velocity
-	Vector velocity(Point{ (int)x, (int)y }, player->getLoc());
-	velocity = velocity.scaleTo(speed);
-
-	//TODO: do this, but use another fixture and the collision engine to figure
-	//out what is nearby
-	/*
-	// check for nearby enemies (again, replace this with spatial data structure later)
-	Vector repel_force;
-	double distance_squared;
-	for (std::shared_ptr<Enemy> e : Enemy::all_enemies) {
-	if (e.get() == this)
-	continue;
-
-	distance_squared = distanceSquared(Point{ x, y }, Point{ e->x, e->y });
-	if (distance_squared < (max_affecting_distance * max_affecting_distance)) {
-	//repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * repel / distance_squared);
-	repel_force = repel_force + Vector(Point{ e->x, e->y }, Point{ x, y }).scaleTo(repel * (1 - sqrt(distance_squared) / max_affecting_distance));
-	}
-	}
-	if (repel_force.getLength() > 0) {
-	repel_force.scaleBy(1 / (all_enemies.size() - 1));
-
-	if (repel_force.getLength() > speed * 2) {
-	repel_force.scaleTo(speed * 2);
-	}
-	velocity = velocity + repel_force;
-	}
-	*/
-
+	Vector velocity = Vector(p, player->getLoc()).scaleTo(speed);
 	body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
 }
 
@@ -109,23 +79,23 @@ int RedEnemy::height = 0;
 int RedEnemy::width = 0;
 SDL_Texture* RedEnemy::tex = nullptr;
 
-RedEnemy::RedEnemy(int x, int y) : Enemy(x, y, height, width, tex, 2),
-	target(getPointOnRing({ 512, 320 }, (int)distance(Point{ 512, 320 }, Point{ 0, 0 }) + 50)) {}
+RedEnemy::RedEnemy(float x, float y) : Enemy(x, y, height, width, tex, 2),
+	target(getPointOnRing({ 512, 320 }, (float)distance(Point{ 512, 320 }, Point{ 0, 0 }) + 50)) {}
 
 void RedEnemy::shoot() {
 	if (gun == nullptr) {
-		gun = std::make_shared<BulletSource<EnemyBullet>>(x, y);
+		gun = std::make_shared<BulletSource<EnemyBullet>>(p);
 	} else {
-		gun->moveTo(x, y);
+		gun->moveTo(p.x, p.y);
 	}
-	gun->fire(Vector({ (int)x, (int)y }, player->getLoc()).getAngle());
+	gun->fire(Vector(p, player->getLoc()).getAngle());
 }
 
 void RedEnemy::step(double seconds) {
 	PhysicsParticle::step(seconds);
 
 	//calculate new velocity
-	Vector velocity = Vector(Point{ (int)x, (int)y }, target).scaleTo(speed);
+	Vector velocity = Vector(p, target).scaleTo(speed);
 	body->SetLinearVelocity(b2Vec2((float32)velocity.getX(), (float32)velocity.getY()));
 
 	if (hp < 2) {
@@ -139,14 +109,14 @@ void RedEnemy::step(double seconds) {
 		gun->step(seconds);
 }
 
-bool RedEnemy::is_dead() const {
-	return Enemy::is_dead() || distance(target, Point{ (int)x, (int)y }) <= 5;
+bool RedEnemy::isDead() const {
+	return Enemy::isDead() || distance(target, p) <= 5;
 }
 
 void RedEnemy::draw(SDL_Renderer* ren) {
-	Enemy::draw(ren);
 	if(gun != nullptr)
-		gun->draw_particles(ren);
+		gun->drawParticles(ren);
+	Enemy::draw(ren);
 }
 
 /***************
@@ -154,17 +124,17 @@ void RedEnemy::draw(SDL_Renderer* ren) {
  ***************/
 
 EnemySpawn::EnemySpawn(int screenWidth, int screenHeight) :
-	RingParticleSource( screenWidth / 2, screenHeight / 2,
-		(int)distance(Point{ screenWidth/2, screenHeight/2 }, Point{ 0, 0 }) + 50,
+	RingParticleSource(Point{ screenWidth / 2.0f, screenHeight / 2.0f },
+		(float)distance(Point{ screenWidth/2.0f, screenHeight/2.0f }, Point{ 0.0f, 0.0f }) + 50,
 		10, true, true) {}
 
-void EnemySpawn::generate_new_particles(int num) {
+void EnemySpawn::generateNewParticles(int num) {
 	int n = particles.size();
-	RingParticleSource::generate_new_particles(num);
+	RingParticleSource::generateNewParticles(num);
 }
 
-void EnemySpawn::initialize_particles() {
-	generate_new_particles(1);
+void EnemySpawn::initializeParticles() {
+	generateNewParticles(1);
 }
 
 void EnemySpawn::step(double seconds) {
@@ -172,7 +142,7 @@ void EnemySpawn::step(double seconds) {
 	time += seconds;
 	if (time >= time_to_spawn) {
 		time = 0;
-		generate_new_particles(1);
+		generateNewParticles(1);
 	}
         if(level < 10) {
             level_time += seconds;
@@ -189,10 +159,9 @@ void EnemySpawn::step(double seconds) {
 		while (it != particles.end()) {
 			std::shared_ptr<Enemy> enemy = *it;
 			enemy->step(seconds);
-			if (enemy->is_dead()) {
+			if (enemy->isDead()) {
 				//create an explosion in the place of the dead enemy
-				explosions.push_back(Explosion((int)enemy->x, (int)enemy->y));
-
+				explosions.push_back(Explosion(enemy->p));
 				it = particles.erase(it);
 			}
 			else {
@@ -202,15 +171,15 @@ void EnemySpawn::step(double seconds) {
 	}
 
 	//now step the explosions
-	step_explosions(seconds);
+	stepExplosions(seconds);
 }
 
 
-void EnemySpawn::step_explosions(double seconds) {
+void EnemySpawn::stepExplosions(double seconds) {
 	std::list<Explosion>::iterator it = explosions.begin();
 	while (it != explosions.end()) {
 		Explosion& e = *it;
-		if (e.is_over()) {
+		if (e.isOver()) {
 			it = explosions.erase(it);
 		}
 		else {
@@ -220,20 +189,20 @@ void EnemySpawn::step_explosions(double seconds) {
 	}
 }
 
-void EnemySpawn::draw_particles(SDL_Renderer* ren) {
-	RingParticleSource::draw_particles(ren);
+void EnemySpawn::drawParticles(SDL_Renderer* ren) {
+	RingParticleSource::drawParticles(ren);
 
 	std::list<Explosion>::iterator it = explosions.begin();
 	while(it != explosions.end()) {
-		(*it).draw_particles(ren);
+		(*it).drawParticles(ren);
 		it++;
 	}
 }
 
 void EnemySpawn::clear() {
-        level = 0;
-        level_time = 0;
-        time_to_spawn = 1.5;
+    level = 0;
+    level_time = 0;
+    time_to_spawn = 1.5;
 	particles.clear();
 	explosions.clear();
 }

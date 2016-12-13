@@ -43,6 +43,8 @@ private:
 	bool canHit();
 	void explode();
 public:
+	static constexpr uint16_t collision_category = 0x0002;
+
 	//drawing stuff
 	static constexpr char* sprite = "../../demo/sprites/playerShip3_blue.png";
 	static SDL_Texture* tex;
@@ -67,7 +69,7 @@ public:
 	double getDir() const;
 	void draw(SDL_Renderer* ren);
 	void hit();
-        void kill();
+	void kill();
 	int getLife();
 
 	static void setPhysicsWorld(b2World* world);

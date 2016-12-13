@@ -2,99 +2,100 @@
 #include <cstdlib>
 #include "Vector.h"
 
-Vector::Vector() : x{ 0 }, y{ 0 }, length{ 0 } {}
+namespace Particles {
 
-Vector::Vector(double xCoord, double yCoord) {
-	x = xCoord;
-	y = yCoord;
-	length = sqrt(x * x + y * y);
-}
+	Vector::Vector() : x{ 0 }, y{ 0 }, length{ 0 } {}
 
-Vector::Vector(const Point start, const Point end) {
-	x = (double)(end.x - start.x);
-	y = (double)(end.y - start.y);
-	length = sqrt(x * x + y * y);
-}
+	Vector::Vector(double xCoord, double yCoord) {
+		x = xCoord;
+		y = yCoord;
+		length = sqrt(x * x + y * y);
+	}
 
-int Vector::getX() const { return (int)x; }
+	Vector::Vector(const Point start, const Point end) {
+		x = (double)(end.x - start.x);
+		y = (double)(end.y - start.y);
+		length = sqrt(x * x + y * y);
+	}
 
-int Vector::getY() const { return (int)y; }
+	int Vector::getX() const { return (int)x; }
 
-double Vector::getLength() const { return length; }
+	int Vector::getY() const { return (int)y; }
 
-double Vector::getAngle() const { return atan2(y, x); }
+	double Vector::getLength() const { return length; }
 
-void Vector::reset(int newX, int newY) {
-	x = newX;
-	y = newY;
-	length = sqrt(x * x + y * y);
-}
+	double Vector::getAngle() const { return atan2(y, x); }
 
-Vector Vector::getUnit() const {
-	return Vector{ x / length, y / length };
-}
+	void Vector::reset(int newX, int newY) {
+		x = newX;
+		y = newY;
+		length = sqrt(x * x + y * y);
+	}
 
-Vector Vector::getPerp() const {
-	return Vector{ 0 - y, x };
-}
+	Vector Vector::getUnit() const {
+		return Vector{ x / length, y / length };
+	}
 
-Vector Vector::getOpposite() const {
-	return Vector{ 0 - x, 0 - y };
-}
+	Vector Vector::getPerp() const {
+		return Vector{ 0 - y, x };
+	}
 
-Vector Vector::scaleBy(double scale) {
-	return Vector{ x * scale, y * scale };
-}
+	Vector Vector::getOpposite() const {
+		return Vector{ 0 - x, 0 - y };
+	}
 
-Vector Vector::scaleTo(double newLength) {
-	return Vector{ (x * newLength) / length, (y * newLength) / length };
-}
+	Vector Vector::scaleBy(double scale) {
+		return Vector{ x * scale, y * scale };
+	}
 
-Vector Vector::getDir(double angle) {
-	return Vector{ cos(angle), sin(angle) };
-}
+	Vector Vector::scaleTo(double newLength) {
+		return Vector{ (x * newLength) / length, (y * newLength) / length };
+	}
 
-void Vector::flip() {
-	x = 0 - x;
-	y = 0 - y;
-}
+	Vector Vector::getDir(double angle) {
+		return Vector{ cos(angle), sin(angle) };
+	}
 
-Point moveBy(const Point p, const Vector dir) {
-	return Point{ p.x + dir.getX(), p.y + dir.getY() };
-}
+	void Vector::flip() {
+		x = 0 - x;
+		y = 0 - y;
+	}
 
-Point moveOrigin(const Point p, const Point newOrigin) {
-	return{ p.x + newOrigin.x, p.y + newOrigin.y };
-}
+	Point moveBy(const Point p, const Vector dir) {
+		return Point{ p.x + dir.getX(), p.y + dir.getY() };
+	}
 
-double toDegrees(double radians) { return radians * 180 / PI; }
+	Point moveOrigin(const Point p, const Point newOrigin) {
+		return{ p.x + newOrigin.x, p.y + newOrigin.y };
+	}
 
-double distanceSquared(const Point a, const Point b) {
-	int xDiff = a.x - b.x;
-	int yDiff = a.y - b.y;
-	return xDiff * xDiff + yDiff * yDiff;
-}
+	double toDegrees(double radians) { return radians * 180 / PI; }
 
-double distance(const Point a, const Point b) {
-	return sqrt(distanceSquared(a, b));
-}
+	double distanceSquared(const Point a, const Point b) {
+		float xDiff = a.x - b.x;
+		float yDiff = a.y - b.y;
+		return xDiff * xDiff + yDiff * yDiff;
+	}
 
-Point rotate(const Point p, double angle, const Point center) {
-	Vector v(center, p);
-	//get the coordinates of p relative to center
-	Point rotated{ p.x - center.x, p.y - center.y };
-	//rotate
-	angle = v.getAngle() + angle;
-	double dist = distance(rotated, { 0, 0 });
-	rotated.x = (int)(cos(angle) * dist);
-	rotated.y = (int)(sin(angle) * dist);
-	//put back in world coordinates
-	rotated.x += center.x;
-	rotated.y += center.y;
-	return rotated;
-}
+	double distance(const Point a, const Point b) { return sqrt(distanceSquared(a, b)); }
 
-Point getPointOnRing(Point center, int radius) {
-	double angle = 2 * PI * ((rand() % 200) / 200.0);
-	return Point{ (int)(center.x + cos(angle) * radius), (int)(center.y + sin(angle) * radius) };
+	Point rotate(const Point p, double angle, const Point center) {
+		Vector v(center, p);
+		//get the coordinates of p relative to center
+		Point rotated{ p.x - center.x, p.y - center.y };
+		//rotate
+		angle = v.getAngle() + angle;
+		double dist = distance(rotated, { 0, 0 });
+		rotated.x = (float)(cos(angle) * dist);
+		rotated.y = (float)(sin(angle) * dist);
+		//put back in world coordinates
+		rotated.x += center.x;
+		rotated.y += center.y;
+		return rotated;
+	}
+
+	Point getPointOnRing(Point center, float radius) {
+		double angle = 2 * PI * ((rand() % 200) / 200.0);
+		return Point{ (float)(center.x + cos(angle) * radius), (float)(center.y + sin(angle) * radius) };
+	}
 }

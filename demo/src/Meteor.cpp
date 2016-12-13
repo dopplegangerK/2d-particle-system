@@ -1,5 +1,4 @@
 #include "Meteor.h"
-#include <iostream>
 
 b2World* Meteor::meteor_world = nullptr;
 int Meteor::height = 0;
@@ -7,15 +6,15 @@ int Meteor::width = 0;
 SDL_Texture* Meteor::tex = nullptr;
 Mix_Chunk* Meteor::sound = nullptr;
 
-Meteor::Meteor(int x, int y, double angle, Point target) :
+Meteor::Meteor(float x, float y, double angle, Point target) :
     PhysicsTrajectoryParticle(x, y, angle, speed, meteor_world, makeMeteorBody(x,y), makeMeteorShape(), 4, 5, 0, 1), target{target.x, target.y} {
-        double rotation = (rand() / RAND_MAX) * (2 * PI);
-        body->SetTransform(body->GetPosition(), rotation);
-        int clockwise = 1;
-        if(rand() % 2 == 0)
-            clockwise = -1;
-        body->ApplyAngularImpulse(10000 * clockwise, true);
-
+	float32 rotation = (float32)((rand() / RAND_MAX) * (2 * PI));
+	body->SetTransform(body->GetPosition(), rotation);
+	int clockwise = 1;
+	if(rand() % 2 == 0)
+		clockwise = -1;
+	body->ApplyAngularImpulse(10000.0f * clockwise, true);
+	
 	channel = Mix_FadeInChannel(-1, sound, 0, 1000);
 }
 
@@ -23,7 +22,7 @@ Meteor::~Meteor() {
 	Mix_FadeOutChannel(channel, 1000);
 }
 
-b2Body* Meteor::makeMeteorBody(int x, int y) {
+b2Body* Meteor::makeMeteorBody(float x, float y) {
     b2BodyDef bodyDef;
     bodyDef.position.Set(x/10.0f, y/10.0f);
     bodyDef.type = b2_dynamicBody;
@@ -32,12 +31,12 @@ b2Body* Meteor::makeMeteorBody(int x, int y) {
 
 b2Shape* Meteor::makeMeteorShape() {
     b2Vec2 vertices[6];
-    vertices[0].Set(-6.4, -8.4);
-    vertices[1].Set(4.4, -8.4);
-    vertices[2].Set(10.0, -0.2);
-    vertices[3].Set(6.8, 6.2);
-    vertices[4].Set(-4.0, 8.4);
-    vertices[5].Set(-10.0, 1.4);
+    vertices[0].Set(-6.4f, -8.4f);
+    vertices[1].Set(4.4f, -8.4f);
+    vertices[2].Set(10.0f, -0.2f);
+    vertices[3].Set(6.8f, 6.2f);
+    vertices[4].Set(-4.0f, 8.4f);
+    vertices[5].Set(-10.0f, 1.4f);
     b2PolygonShape* pShape = new b2PolygonShape();
     pShape->Set(vertices, 6);
     return pShape;
@@ -45,22 +44,22 @@ b2Shape* Meteor::makeMeteorShape() {
 
 void Meteor::setPhysicsWorld(b2World* world) { meteor_world = world; }
 
-std::shared_ptr<Meteor> Meteor::createParticleAt(int x, int y) {
-    Point p = getPointOnRing({ 512, 320 }, (int)distance(Point{ 512, 320 }, Point{ 0, 0 }) + 100);
+std::shared_ptr<Meteor> Meteor::createParticleAt(float x, float y) {
+    Point p = getPointOnRing({ 512.0f, 320.0f }, (float)distance(Point{ 512.0f, 320.0f }, Point{ 0.0f, 0.0f }) + 100);
     double angle = Vector({x, y}, p).getAngle();
     return std::make_shared<Meteor>(x, y, angle, p);
 }
 
-bool Meteor::is_dead() const {
-    return distance({(int)x, (int)y}, target) <= 10;
+bool Meteor::isDead() const {
+    return distance(p, target) <= 10;
 }
 
 void Meteor::draw(SDL_Renderer* ren) {
     SDL_Rect rect;
     rect.w = width;
     rect.h = height;
-    rect.x = (int)x - rect.w / 2;
-    rect.y = (int)y - rect.h / 2;
+    rect.x = (int)p.x - rect.w / 2;
+    rect.y = (int)p.y - rect.h / 2;
     SDL_RenderCopyEx(ren, tex, NULL, &rect, toDegrees(body->GetAngle()), NULL, SDL_FLIP_NONE);
 
     /*
@@ -75,15 +74,15 @@ void Meteor::draw(SDL_Renderer* ren) {
 }
 
 MeteorSpawn::MeteorSpawn(int screenWidth, int screenHeight) : 
-    RingParticleSource( screenWidth / 2, screenHeight / 2,
-    (int)distance(Point{ screenWidth/2, screenHeight/2 }, Point{ 0, 0 }) + 50,
+    RingParticleSource( screenWidth / 2.0f, screenHeight / 2.0f,
+    (float)distance(Point{ screenWidth / 2.0f, screenHeight / 2.0f }, Point{ 0.0f, 0.0f }) + 50,
     10, true, true) {}
 
 void MeteorSpawn::step(double seconds) {
     RingParticleSource::step(seconds);
     time_to_spawn -= seconds;
     if(time_to_spawn <= 0) {
-        generate_new_particles(1);
+        generateNewParticles(1);
         time_to_spawn = (double)(rand() % (max_spawn_time - min_spawn_time) + min_spawn_time);
     }
 }

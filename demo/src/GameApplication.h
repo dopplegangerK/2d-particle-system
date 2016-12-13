@@ -33,7 +33,7 @@ private:
 	TTF_Font* med_font;
 
 	Text start_text;
-        Text title_text;
+	Text title_text;
 	Text pause1_text;
 	Text pause2_text;
 	Text menu1_text;
@@ -76,7 +76,7 @@ private:
 	void drawBackground();
 	void drawRocket();
 	void drawEnemies();
-        void drawMeteors();
+	void drawMeteors();
 	void drawText(Text& t);
 	void drawScore();
 	void drawLives();

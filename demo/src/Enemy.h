@@ -10,15 +10,13 @@
 #include <SDL.h>
 #include <vector>
 
+using namespace Particles;
+
 //type = 1
-class Enemy: public PhysicsParticle {
+class Enemy: public Particles::PhysicsParticle {
 protected:
 	//keep the player's location so we know where to go
 	static Rocket* player;
-	//maximum distance two enemies can be from each other before they start to repel
-	static constexpr double max_affecting_distance = 75;
-	//coefficient for how much enemies repel each other
-	static constexpr double repel = 600;
 
 	static constexpr int max_speed = 20;
 	static constexpr int min_speed = 10;
@@ -31,22 +29,25 @@ protected:
 	SDL_Texture* myTex;
 
 	static b2World* enemy_world;
+
 	static b2Body* makeEnemyBody(int x, int y);
 	static b2Shape* makeEnemyShape(int r);
 public:
 	friend class EnemySpawn;
 
-	Enemy(int x, int y, int w, int h, SDL_Texture* tex, int hp);
+	static constexpr uint16_t collision_category = 0x0008;
+
+	Enemy(float x, float y, int w, int h, SDL_Texture* tex, int hp);
 	virtual ~Enemy() {}
 
 	virtual void draw(SDL_Renderer* ren);
 	virtual void step(double seconds) = 0;
-	virtual bool is_dead() const { return hp <= 0; }
+	virtual bool isDead() const { return hp <= 0; }
 
 	virtual void hit(int damage);
 	virtual int pointValue() = 0;
 
-	static std::shared_ptr<Enemy> createParticleAt(int x, int y);
+	static std::shared_ptr<Enemy> createParticleAt(float x, float y);
 	static void setPlayer(Rocket* r) { player = r; }
 	static void setPhysicsWorld(b2World* w) { enemy_world = w; }
 };
@@ -59,7 +60,7 @@ public:
 	static int width;
 	static int height;
 
-	GreenEnemy(int x, int y);
+	GreenEnemy(float x, float y);
 	virtual ~GreenEnemy() {}
 
 	virtual void step(double seconds);
@@ -83,37 +84,37 @@ public:
 	static int width;
 	static int height;
 
-	RedEnemy(int x, int y);
+	RedEnemy(float x, float y);
 	virtual ~RedEnemy() {}
-	virtual bool is_dead() const;
+	virtual bool isDead() const;
 	virtual void draw(SDL_Renderer* ren);
-
 	virtual void step(double seconds);
 
 	virtual int pointValue() { return 20; }
 };
 
-class EnemySpawn : public RingParticleSource<Enemy> {
+class EnemySpawn : public Particles::RingParticleSource<Enemy> {
 private:
-        static constexpr double difficulty_coeff = 0.85;
-        static constexpr int level_length = 12;
-        int level = 0;
+    static constexpr double difficulty_coeff = 0.85;
+    static constexpr int level_length = 12;
+
+	int level = 0;
 
 	double time_to_spawn = 1.5;
 	double time = 0;
-        double level_time = 0;
+	double level_time = 0;
 
 	std::list<Explosion> explosions;
 
-	virtual void generate_new_particles(int num);
+	virtual void generateNewParticles(int num);
 public:
 	EnemySpawn(int screenWidth, int screenHeight);
 	~EnemySpawn() {}
 
-	virtual void initialize_particles();
+	virtual void initializeParticles();
 	virtual void step(double seconds);
-	virtual void step_explosions(double seconds);
-	virtual void draw_particles(SDL_Renderer* ren);
+	virtual void stepExplosions(double seconds);
+	virtual void drawParticles(SDL_Renderer* ren);
 	virtual void clear();
 };
 
