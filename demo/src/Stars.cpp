@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <time.h>
+#include <iostream>
 #include <SDL2_gfxPrimitives.h>
 
 int Star::height = 0;
@@ -10,7 +11,7 @@ SDL_Texture* Star::tex = nullptr;
 
 Star::Star(float x, float y) : Particle(x, y), twinkle_time(0) {
 	// Generate a random time
-	max_twinkle_time = ((double)rand() / RAND_MAX) * 0.5 + 0.75;
+	max_twinkle_time = ((double)rand() / RAND_MAX) * 0.75 + 0.5;
 
 	// Generate a random size
 	radius = rand() % max_radius;
