@@ -16,9 +16,21 @@ target_include_directories(Particles PUBLIC ./
 	${SDL2_GFX_INCLUDE_DIR} )
 
 target_link_libraries(Particles
-    ${BOX2D_LIBRARY}
-    ${SDL2_LIBRARY}
-    ${SDL2_IMAGE_LIBRARY}
-    ${SDL2_GFX_LIBRARY})
+	${BOX2D_LIBRARY}
+	${SDL2_LIBRARY}
+	${SDL2_IMAGE_LIBRARY}
+	${SDL2_GFX_LIBRARY})
+
+set(PARTICLES_HDRS
+	Particles.h
+	Particle.h
+	ParticleSource.h
+	LineParticleSource.h
+	PointParticleSource.h
+	ScatteredParticleSource.h
+	RingParticleSource.h
+	Vector.h )
+	
 
 install(TARGETS Particles DESTINATION lib)
+install(FILES ${PARTICLES_HDRS} DESTINATION include)

@@ -84,7 +84,7 @@ void GameApplication::initSDL() {
 
 void GameApplication::createWindow() {
 	window = SDL_CreateWindow(
-		"Final Project",                  // window title (think of a better name later)
+		"Space!",                  // window title
 		8,           // initial x position
 		36,           // initial y position
 		screenWidth,                               // width, in pixels
