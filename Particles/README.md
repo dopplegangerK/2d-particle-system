@@ -2,6 +2,8 @@
 
 This library is intended to be adapted for a wide variety of uses, and as such, does not code for any specific types of particles. It is intended to be used as a framework. To see how these particles can be implemented, see their uses in the SpaceGame directory.
 
+To use, include the header `Particles.h`
+
 ##The Particle class
 To create a particle type, you must first override the `Particle` class.
 
