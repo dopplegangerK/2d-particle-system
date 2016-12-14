@@ -26,6 +26,8 @@ First, create a `build` directory inside the root directory and cd into it. Run 
 ####Windows:
 Use the .sln file that is generated to build the solution, then make sure you build the INSTALL project (you may need to do this explicitly). This will create an `install` directory in the project's root directory and copy the built files there.
 
+Note: Be sure to copy the .dll files needed for SDL into the `install/bin` directory (Apart from the .dll's with the same name as the libraries, you'll need libfreetype-6.dll, zlib1.dll, and libpng16-16.dll).
+
 ####Linux:
 After running cmake (command above), run `make`, `make install`.
 
