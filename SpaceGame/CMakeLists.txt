@@ -1,14 +1,3 @@
-#file(GLOB SOURCES "src/*"
-#    "../Box2D/*"
-#    "../Box2D/Collision/*"
-#    "../Box2D/Collision/Shapes/*"
-#    "../Box2D/Common/*"
-#    "../Box2D/Dynamics/*"
-#    "../Box2D/Dynamics/Contacts/*"
-#    "../Box2D/Dynamics/Joints/*"
-#    "../Box2D/Rope/*"
-#    )
-
 file(GLOB SOURCES "src/*")
 
 add_executable (SpaceGame ${SOURCES})

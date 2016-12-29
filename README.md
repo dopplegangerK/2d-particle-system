@@ -21,7 +21,7 @@ If cmake has trouble finding any of these libraries (it definitely will if you'r
 ###CMake
 This project uses cmake as its build system. If you don't already have cmake downloaded and installed, do so [here](https://cmake.org/download/). The game's excecutable will be built in the `install/bin` directory (in this project's root directory), and the Particles library will be written to `install/lib`.
 
-First, create a `build` directory inside the root directory and cd into it. Run `cmake ../ -DCMAKE_INSTALL_PREFIX=../install`.
+First, create a `build` directory inside the root directory and cd into it. Run `cmake ../`
 
 ####Windows:
 Use the .sln file that is generated to build the solution, then make sure you build the INSTALL project (you may need to do this explicitly). This will create an `install` directory in the project's root directory and copy the built files there.
@@ -29,7 +29,7 @@ Use the .sln file that is generated to build the solution, then make sure you bu
 Note: Be sure to copy the .dll files needed for SDL into the `install/bin` directory (Apart from the .dll's with the same name as the libraries, you'll need libfreetype-6.dll, zlib1.dll, and libpng16-16.dll).
 
 ####Linux:
-After running cmake (command above), run `make`, `make install`.
+After running cmake (command above), run `make`, `make install`. The built files will be placed in a new `install` directory in the project's root directory.
 
 ###Game credits:
 - Sprites: [Kenney Vleugels] (http://opengameart.org/content/space-shooter-redux)
