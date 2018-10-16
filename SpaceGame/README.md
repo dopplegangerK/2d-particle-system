@@ -14,18 +14,18 @@ Green      |  5 pts | 1 hit        | Will chase you until you kill them.
 Red        | 20 pts | 2 hits       | These will mind their own business, until you shoot them once. Then they start shooting back.
 Asteroids  |  0 pts | ? hits       | Instant death
 
-##Use of Particles
+## Use of Particles
 
-For those interested in a demo of the Particles library, everything onscreen except the player's ship and the text is modeled as a particle.
+Everything onscreen except the player's ship and the text is modeled as a particle in a particle system.
 
 ##### Particle Types:
 - Particle (the base class) - Stars
 - PhysicsParticle - Enemies, asteroids
-- TrajectoryParticle - Fire/explosion particles (see src/Explosion.cpp for how the explosions fade and change colors)
+- TrajectoryParticle - Fire/explosion particles (see `src/Explosion.cpp` for how the explosions fade and change colors)
 - PhysicsTrajectoryParticle - Bullets
 
 ##### Particle Sources:
 - LineParticleSource - Fire (from the player's ship)
 - PointParticleSource - Explosions
-- RingParticleSource - Enemy and meteor spawns
+- RingParticleSource - Enemy and meteor spawns (spawned along the circumference of a circle around the screen)
 - ScatteredParticleSource - Stars
